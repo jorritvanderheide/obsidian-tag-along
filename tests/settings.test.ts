@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { applySettingsChange, DEFAULT_SETTINGS, migrateSettings } from '../src/settings';
+import { applySettingsChange, DEFAULT_SETTINGS, migrateSettings, SETTINGS_VERSION } from '../src/settings';
 
 describe('migrateSettings', () => {
 	it('returns defaults when nothing is stored', () => {
@@ -22,7 +22,9 @@ describe('migrateSettings', () => {
 			excludedTags: ['#Archived/', 'archived', 3],
 			hiddenFolders: ['#Foo', 'foo/Bar/', 'foo'],
 			topLevelFolders: ['#Foo/Bar/', 'foo', 'foo/bar'],
+			flatFolders: ['#Foo/Bar', 'foo/bar', 3],
 			folderOrder: ['#Bar', 'bar', 'foo/qux'],
+			folderOrderEnd: ['#Baz', 'foo/qux'],
 			folderIcons: { '#Foo/': 'star', bar: 3, '': 'x', baz: '' },
 			includedFolders: ['Notes/'],
 			excludedFolders: ['/Templates/', ''],
@@ -34,7 +36,10 @@ describe('migrateSettings', () => {
 			excludedTags: ['archived'],
 			hiddenFolders: ['foo', 'foo/bar'],
 			topLevelFolders: ['foo/bar'],
+			flatFolders: ['foo/bar'],
 			folderOrder: ['bar', 'foo/qux'],
+			// A folder kept first is not kept last as well.
+			folderOrderEnd: ['baz'],
 			folderIcons: { foo: 'star' },
 			includedFolders: ['Notes'],
 			excludedFolders: ['Templates'],
@@ -67,7 +72,7 @@ describe('migrateSettings', () => {
 			expandedTags: ['domain/'],
 		};
 		expect(migrateSettings(v1)).toEqual({
-			version: 3,
+			version: SETTINGS_VERSION,
 			showNoteTitles: false,
 			showNoteCount: true,
 			compactFolders: false,
@@ -79,7 +84,9 @@ describe('migrateSettings', () => {
 			excludedTags: ['draft', 'private', 'status/archived'],
 			hiddenFolders: ['source', 'domain/old'],
 			topLevelFolders: [],
+			flatFolders: [],
 			folderOrder: ['coding'],
+			folderOrderEnd: [],
 			folderIcons: { coding: 'code' },
 			includedFolders: ['Notes', 'Journal'],
 			excludedFolders: ['Templates', 'Archive'],
@@ -92,7 +99,24 @@ describe('migrateSettings', () => {
 			...DEFAULT_SETTINGS,
 			showNoteCount: true,
 			topLevelFolders: ['domain/coding', 'domain/phd'],
-			folderOrder: ['status', 'coding', 'phd'],
+			// The order went by the name a folder is shown with until version 4, which gave the parent back.
+			folderOrder: ['status', 'domain/coding', 'domain/phd'],
+		});
+	});
+
+	it('gives folders in the order their parent back, once they are shown at the top level', () => {
+		const stored = {
+			version: 3,
+			topLevelFolders: ['literature/finished', 'source/finished'],
+			folderOrder: ['inbox', 'finished/2024', 'domain'],
+			folderOrderEnd: ['Finished'],
+		};
+		expect(migrateSettings(stored)).toEqual({
+			...DEFAULT_SETTINGS,
+			topLevelFolders: ['literature/finished', 'source/finished'],
+			// Two moved tags share the name "finished"; the first one wins.
+			folderOrder: ['inbox', 'literature/finished/2024', 'domain'],
+			folderOrderEnd: ['literature/finished'],
 		});
 	});
 

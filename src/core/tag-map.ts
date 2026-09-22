@@ -60,6 +60,20 @@ export class TagMap {
 		return this.isHidden(original, shown, moved) ? undefined : shown;
 	}
 
+	/**
+	 * Where each of `sources` is shown in the tree (lower-case), for settings that point at folders.
+	 * Hidden tags are dropped, and tags that end up in the same folder are kept once, the first one.
+	 * Not for `hiddenFolders` and `topLevelFolders`: those shape the mapping instead of following it.
+	 */
+	shownTags(sources: readonly string[]): string[] {
+		const shown: string[] = [];
+		for (const source of sources) {
+			const tag = this.shownTag(source);
+			if (tag !== undefined && !shown.includes(tag)) shown.push(tag);
+		}
+		return shown;
+	}
+
 	/** The sub-tags moved into the top-level folder `namespace`. */
 	movedFrom(namespace: string): readonly string[] {
 		return this.movedByName.get(namespace) ?? [];

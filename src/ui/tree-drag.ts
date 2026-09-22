@@ -9,12 +9,8 @@ export interface TreeDragHost {
 	reorder(dragged: FolderNode, target: FolderNode, before: boolean): void;
 }
 
-interface Row {
-	el: HTMLElement;
+interface DropTarget {
 	row: FolderRow;
-}
-
-interface DropTarget extends Row {
 	/** True when the dragged folder goes above the target, false when it goes below it. */
 	before: boolean;
 }
@@ -31,15 +27,15 @@ export class TreeDrag {
 	constructor(private readonly host: TreeDragHost) {}
 
 	onDragStart(evt: DragEvent): void {
-		const dragged = this.rowAt(evt.target);
-		if (!dragged || dragged.row.node.kind !== 'folder') {
+		const dragged = this.host.renderer().folderRowAt(evt.target);
+		if (!dragged || dragged.node.kind !== 'folder') {
 			evt.preventDefault();
 			return;
 		}
-		this.draggedKey = dragged.row.node.key;
+		this.draggedKey = dragged.node.key;
 		if (evt.dataTransfer) {
 			evt.dataTransfer.effectAllowed = 'move';
-			evt.dataTransfer.setData('text/plain', dragged.row.node.label);
+			evt.dataTransfer.setData('text/plain', dragged.node.label);
 		}
 	}
 
@@ -62,7 +58,7 @@ export class TreeDrag {
 		this.onDragEnd();
 		if (!target || !dragged) return;
 		evt.preventDefault();
-		this.host.reorder(dragged.row.node, target.row.node, target.before);
+		this.host.reorder(dragged.node, target.row.node, target.before);
 	}
 
 	onDragEnd(): void {
@@ -78,28 +74,20 @@ export class TreeDrag {
 	/** Where the dragged folder would land: another folder of the same level, above or below it. */
 	private dropTarget(evt: DragEvent): DropTarget | undefined {
 		const dragged = this.draggedRow();
-		const target = this.rowAt(evt.target);
-		if (!dragged || !target || target.row.node.kind !== 'folder') return undefined;
-		if (target.row.node.key === dragged.row.node.key) return undefined;
-		if (parentKey(target.row.node) !== parentKey(dragged.row.node)) return undefined;
-		const { top, height } = target.el.getBoundingClientRect();
+		const row = this.host.renderer().folderRowAt(evt.target);
+		if (!dragged || !row || row.node.kind !== 'folder') return undefined;
+		if (row.node.key === dragged.node.key) return undefined;
+		if (parentKey(row.node) !== parentKey(dragged.node)) return undefined;
+		const { top, height } = row.selfEl.getBoundingClientRect();
 		const before = evt.clientY < top + height / 2;
 		// Dropping right next to where the folder already is would not move it, so it is not offered.
-		const siblings = this.host.siblings(dragged.row.node).map((node) => node.key);
-		if (isSamePlace(siblings, dragged.row.node.key, target.row.node.key, before)) return undefined;
-		return { ...target, before };
+		const siblings = this.host.siblings(dragged.node).map((node) => node.key);
+		if (isSamePlace(siblings, dragged.node.key, row.node.key, before)) return undefined;
+		return { row, before };
 	}
 
-	private draggedRow(): Row | undefined {
-		const row = this.draggedKey === null ? undefined : this.host.renderer().folderRow(this.draggedKey);
-		return row && { el: row.itemEl, row };
-	}
-
-	private rowAt(target: EventTarget | null): Row | undefined {
-		const el = (target as HTMLElement | null)?.closest<HTMLElement>('.nav-folder-title');
-		const key = el?.dataset.key;
-		const row = key === undefined ? undefined : this.host.renderer().folderRow(key);
-		return el && row ? { el, row } : undefined;
+	private draggedRow(): FolderRow | undefined {
+		return this.draggedKey === null ? undefined : this.host.renderer().folderRow(this.draggedKey);
 	}
 
 	private showIndicator(target: DropTarget): void {

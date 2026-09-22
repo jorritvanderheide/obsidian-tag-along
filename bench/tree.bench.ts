@@ -9,7 +9,9 @@ const options: TreeOptions = {
 	showUntagged: false,
 	hiddenFolders: ['topic/value-1'],
 	topLevelFolders: ['project/value-2'],
+	flatFolders: [],
 	folderOrder: ['status'],
+	folderOrderEnd: [],
 	noteSort: 'name-asc',
 	folderSort: 'name-asc',
 };

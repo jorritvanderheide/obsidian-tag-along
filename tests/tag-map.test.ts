@@ -35,6 +35,23 @@ describe('TagMap', () => {
 		});
 	});
 
+	describe('shownTags', () => {
+		it('gives the folder each tag is shown in, as the tree knows it', () => {
+			const m = map([note('A', 'Foo/Bar/x'), note('B', 'qux')], { topLevelFolders: ['foo/bar'] });
+			expect(m.shownTags(['#Foo/Bar/x', 'qux'])).toEqual(['bar/x', 'qux']);
+		});
+
+		it('drops tags without a folder', () => {
+			const m = map([note('A', 'foo/bar')], { hiddenFolders: ['foo'] });
+			expect(m.shownTags(['foo/bar', 'qux'])).toEqual(['qux']);
+		});
+
+		it('keeps tags that end up in the same folder once, the first one', () => {
+			const m = map([note('A', 'foo/bar'), note('B', 'bar')], { topLevelFolders: ['foo/bar'] });
+			expect(m.shownTags(['foo/bar', 'bar'])).toEqual(['bar']);
+		});
+	});
+
 	describe('mapping folders back', () => {
 		it('maps folders back to the tags they came from', () => {
 			const m = map([note('A', 'foo/bar/x')], { topLevelFolders: ['foo/bar'] });

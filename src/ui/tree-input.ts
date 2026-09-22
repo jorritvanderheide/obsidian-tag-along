@@ -46,9 +46,9 @@ export class TreeInput {
 		this.focusedRow()?.addClass('has-focus');
 	}
 
-	onFolderClick(el: HTMLElement, row: FolderRow): void {
+	onFolderClick(row: FolderRow): void {
 		this.clearSelection();
-		this.setFocus(el);
+		this.setFocus(row.selfEl);
 		this.host.toggleFolder(row);
 	}
 

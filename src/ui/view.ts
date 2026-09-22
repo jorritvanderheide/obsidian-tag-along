@@ -10,7 +10,7 @@ import {
 } from 'obsidian';
 import { reorderFolders } from '../core/reorder';
 import type { FolderNode, TagTree } from '../core/tree';
-import type TagExplorerPlugin from '../main';
+import type { PluginHost } from '../host';
 import { folderIcon, showFolderMenu } from './folder-menu';
 import { showNoteMenu, showNotesMenu } from './note-menu';
 import { showSortMenu } from './sort-menu';
@@ -47,7 +47,7 @@ export class TagExplorerView extends ItemView implements HoverParent {
 
 	constructor(
 		leaf: WorkspaceLeaf,
-		private readonly plugin: TagExplorerPlugin,
+		private readonly plugin: PluginHost,
 	) {
 		super(leaf);
 	}
@@ -68,7 +68,7 @@ export class TagExplorerView extends ItemView implements HoverParent {
 		this.contentEl.empty();
 		this.buildToolbar(this.contentEl.createDiv({ cls: 'nav-header' }));
 		this.scrollEl = this.contentEl.createDiv({ cls: 'nav-files-container' });
-		this.renderer = new TreeRenderer(this.scrollEl.createDiv(), {
+		this.renderer = new TreeRenderer(this.scrollEl.createDiv({ cls: 'tag-explorer-tree' }), {
 			isExpanded: (key) => this.expanded.has(key),
 			activePath: () => this.activePath,
 			isSelected: (path) => this.input.isSelected(path),
@@ -154,10 +154,7 @@ export class TagExplorerView extends ItemView implements HoverParent {
 	/** Opens the folders down to a note, scrolls to it and flashes it. Returns false when it is not shown. */
 	revealNote(path: string): boolean {
 		const folder = this.openPath(this.tree?.pathToNote(path));
-		const row = folder && this.renderer.folderRow(folder.key);
-		const noteEl = Array.from(row?.childrenEl.children ?? [])
-			.map((child) => child.querySelector<HTMLElement>(':scope > .nav-file-title'))
-			.find((el) => el?.dataset.path === path);
+		const noteEl = folder && this.renderer.noteRow(path, folder.key);
 		if (!noteEl) return false;
 		this.input.setFocus(noteEl);
 		flash(noteEl);
@@ -168,10 +165,9 @@ export class TagExplorerView extends ItemView implements HoverParent {
 	revealTag(tag: string): boolean {
 		const folder = this.openPath(this.tree?.pathToTag(tag));
 		const row = folder && this.renderer.folderRow(folder.key);
-		const folderEl = row?.itemEl.querySelector<HTMLElement>(':scope > .nav-folder-title');
-		if (!folderEl) return false;
-		this.input.setFocus(folderEl);
-		flash(folderEl);
+		if (!row) return false;
+		this.input.setFocus(row.selfEl);
+		flash(row.selfEl);
 		return true;
 	}
 
@@ -191,10 +187,12 @@ export class TagExplorerView extends ItemView implements HoverParent {
 
 	/** Writes down the order of a folder's level after one of its folders was dragged. */
 	private reorder(dragged: FolderNode, target: FolderNode, before: boolean): void {
-		const siblings = this.siblings(dragged).map((node) => node.chain[0] ?? '');
-		void this.plugin.updateSettings((s) => ({
-			folderOrder: reorderFolders(s.folderOrder, siblings, dragged.chain[0] ?? '', target.chain[0] ?? '', before),
-		}));
+		const tree = this.tree;
+		if (!tree) return;
+		const siblings = this.siblings(dragged).map((node) => tree.levelTag(node));
+		void this.plugin.updateSettings((s) =>
+			reorderFolders(s, siblings, tree.levelTag(dragged), tree.levelTag(target), before),
+		);
 	}
 
 	private toggleFolder(row: FolderRow): void {
@@ -242,13 +240,12 @@ export class TagExplorerView extends ItemView implements HoverParent {
 
 	private onClick(evt: MouseEvent): void {
 		const target = evt.target as HTMLElement;
-		const folderEl = target.closest<HTMLElement>('.nav-folder-title');
-		const row = folderEl?.dataset.key !== undefined ? this.renderer.folderRow(folderEl.dataset.key) : undefined;
-		if (folderEl && row) {
-			this.input.onFolderClick(folderEl, row);
+		const row = this.renderer.folderRowAt(target);
+		if (row) {
+			this.input.onFolderClick(row);
 			return;
 		}
-		const noteEl = target.closest<HTMLElement>('.nav-file-title');
+		const noteEl = this.renderer.noteRowAt(target);
 		const path = noteEl?.dataset.path;
 		const file = path ? this.app.vault.getFileByPath(path) : null;
 		if (!noteEl || !file) return;
@@ -258,7 +255,7 @@ export class TagExplorerView extends ItemView implements HoverParent {
 
 	private onContextMenu(evt: MouseEvent): void {
 		const target = evt.target as HTMLElement;
-		const path = target.closest<HTMLElement>('.nav-file-title')?.dataset.path;
+		const path = this.renderer.noteRowAt(target)?.dataset.path;
 		const file = path ? this.app.vault.getFileByPath(path) : null;
 		if (file) {
 			evt.preventDefault();
@@ -271,8 +268,7 @@ export class TagExplorerView extends ItemView implements HoverParent {
 			}
 			return;
 		}
-		const key = target.closest<HTMLElement>('.nav-folder-title')?.dataset.key;
-		const row = key !== undefined ? this.renderer.folderRow(key) : undefined;
+		const row = this.renderer.folderRowAt(target);
 		if (!row || !this.tree) return;
 		// Filter folders have no menu of their own, but should not show a default one either.
 		evt.preventDefault();
@@ -280,7 +276,7 @@ export class TagExplorerView extends ItemView implements HoverParent {
 	}
 
 	private onHover(evt: MouseEvent): void {
-		const targetEl = (evt.target as HTMLElement).closest<HTMLElement>('.nav-file-title');
+		const targetEl = this.renderer.noteRowAt(evt.target);
 		const path = targetEl?.dataset.path;
 		if (!targetEl || !path || targetEl.contains(evt.relatedTarget as Node | null)) return;
 		this.app.workspace.trigger('hover-link', {

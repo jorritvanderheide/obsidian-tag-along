@@ -7,10 +7,14 @@ export interface TreeOptions extends TagMapOptions {
 	compactFolders: boolean;
 	/** Offer folders that narrow a folder's notes down by another namespace. */
 	filterFolders: boolean;
+	/** Folders that list every note below them instead of showing sub-folders. */
+	flatFolders: string[];
 	/** Show notes without tags at the top level. */
 	showUntagged: boolean;
 	/** Folders ordered by hand, shown before the ones left to the sort order. */
 	folderOrder: string[];
+	/** Folders ordered by hand, shown after the ones left to the sort order. */
+	folderOrderEnd: string[];
 	noteSort: NoteSort;
 	folderSort: FolderSort;
 }
@@ -29,6 +33,10 @@ export interface FolderNode {
 	namespaces: string[];
 	/** True for folders directly at the top of the tree. */
 	isTopLevel: boolean;
+	/** True when the folder lists every note below it instead of showing sub-folders. */
+	isFlat: boolean;
+	/** True when the folder is kept last, after the ones that follow the sort order. */
+	isPinned: boolean;
 	parent: FolderNode | undefined;
 }
 
@@ -72,6 +80,12 @@ export class TagTree {
 	private readonly labels = new Map<string, string>();
 	/** Where each folder ordered by hand goes among its siblings, by tag. */
 	private readonly orderRank = new Map<string, number>();
+	/** The rank of the folders left to the sort order: after the ones kept first, before the ones kept last. */
+	private readonly flowRank: number;
+	/** The folders that list every note below them, as their tags are shown in the tree. */
+	private readonly flat: Set<string>;
+	/** The folders kept last, as their tags are shown in the tree. */
+	private readonly pinned: Set<string>;
 
 	// An index of the whole tree, built once, so opening a folder is a lookup instead of a scan.
 	/** Notes with this tag or a tag below it. */
@@ -86,7 +100,13 @@ export class TagTree {
 		private readonly options: TreeOptions,
 	) {
 		this.tags = new TagMap(notes, options);
-		options.folderOrder.forEach((tag, index) => this.orderRank.set(tag, index));
+		const order = this.tags.shownTags(options.folderOrder);
+		order.forEach((tag, index) => this.orderRank.set(tag, index));
+		this.flowRank = order.length;
+		const last = this.tags.shownTags(options.folderOrderEnd);
+		last.forEach((tag, index) => this.orderRank.set(tag, this.flowRank + 1 + index));
+		this.pinned = new Set(last);
+		this.flat = new Set(this.tags.shownTags(options.flatFolders));
 		for (const note of notes) this.addToIndex(note, this.tags.lowerTagsOf(note));
 	}
 
@@ -96,6 +116,16 @@ export class TagTree {
 	 */
 	sourceTags(node: FolderNode): string[] {
 		return [...node.chain].reverse().map((tag) => this.tags.originalTag(tag) ?? tag);
+	}
+
+	/**
+	 * The tag a folder stands for at its own level, as written in notes: the outermost one of a
+	 * compacted chain, so a folder keeps its place when compact folders are turned off. Folder order
+	 * and pinning go by it, where icons and flat folders go by the deepest tag, from `sourceTags`.
+	 */
+	levelTag(node: FolderNode): string {
+		const tag = node.chain[0] ?? '';
+		return this.tags.originalTag(tag) ?? tag;
 	}
 
 	/**
@@ -142,8 +172,8 @@ export class TagTree {
 			const node = folders.find((n) => isTagOrChild(tag, n.chain[0] ?? ''));
 			if (!node) return undefined;
 			path.push(node);
-			// A compacted folder may stand for the tag somewhere in its chain.
-			if (node.chain.includes(tag)) return path;
+			// A compacted folder may stand for the tag somewhere in its chain; a flat folder lists its notes.
+			if (node.chain.includes(tag) || node.isFlat) return path;
 			folders = this.children(node).folders;
 		}
 	}
@@ -209,12 +239,18 @@ export class TagTree {
 		parent: FolderNode | undefined,
 	): FolderNode {
 		const chain = [tag];
-		let groups = this.group(tag, notes);
-		while (this.options.compactFolders) {
+		// Filter folders exist to split notes up by tag: they are never flattened, and the sort order
+		// alone decides where they go.
+		const isTagFolder = kind === 'folder';
+		let isFlat = isTagFolder && this.flat.has(tag);
+		let groups: Groups = isFlat ? { folders: [], notes } : this.group(tag, notes);
+		// A flat folder has no sub-folder to merge with, so compacting stops there.
+		while (this.options.compactFolders && !isFlat) {
 			const only = groups.folders[0];
 			if (groups.folders.length !== 1 || groups.notes.length > 0 || !only) break;
 			chain.push(only.tag);
-			groups = this.group(only.tag, only.notes);
+			isFlat = isTagFolder && this.flat.has(only.tag);
+			groups = isFlat ? { folders: [], notes: only.notes } : this.group(only.tag, only.notes);
 		}
 		const node: FolderNode = {
 			kind,
@@ -224,6 +260,8 @@ export class TagTree {
 			notes,
 			namespaces,
 			isTopLevel: parent === undefined,
+			isFlat,
+			isPinned: isTagFolder && this.pinned.has(tag),
 			parent,
 		};
 		this.groups.set(node, groups);
@@ -347,12 +385,12 @@ export class TagTree {
 	}
 
 	/**
-	 * Moves the folders ordered by hand to the front, in that order. The sort is stable, so the rest
-	 * keep the order the sort put them in. Filter folders always follow the sort order.
+	 * Moves the folders ordered by hand to the front and the ones kept last to the back, in that
+	 * order. The sort is stable, so the rest keep the order the sort put them in, in between.
+	 * Filter folders always follow the sort order.
 	 */
 	private orderByHand(folders: FolderNode[]): FolderNode[] {
-		const unordered = this.orderRank.size;
-		const rank = (node: FolderNode) => this.orderRank.get(node.chain[0] ?? '') ?? unordered;
+		const rank = (node: FolderNode) => this.orderRank.get(node.chain[0] ?? '') ?? this.flowRank;
 		return folders.sort((a, b) => rank(a) - rank(b));
 	}
 

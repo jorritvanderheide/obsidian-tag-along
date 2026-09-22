@@ -8,7 +8,9 @@ const defaults: TreeOptions = {
 	showUntagged: false,
 	hiddenFolders: [],
 	topLevelFolders: [],
+	flatFolders: [],
 	folderOrder: [],
+	folderOrderEnd: [],
 	noteSort: 'name-asc',
 	folderSort: 'name-asc',
 };
@@ -124,6 +126,72 @@ describe('TagTree', () => {
 		});
 	});
 
+	describe('flat folders', () => {
+		const notes = [
+			note('A', 'foo/bar/baz'),
+			note('B', 'foo/bar'),
+			note('C', 'foo/qux'),
+			note('D', 'other'),
+		];
+
+		it('lists every note below the folder instead of showing sub-folders', () => {
+			const t = tree(notes, { flatFolders: ['#Foo'] });
+			expect(outline(t, t.root())).toEqual(['foo/', '  A', '  B', '  C', 'other/', '  D']);
+		});
+
+		it('flattens only the folder itself, not its parent', () => {
+			const t = tree(notes, { flatFolders: ['foo/bar'] });
+			expect(outline(t, t.root())).toEqual(['foo/', '  bar/', '    A', '    B', '  qux/', '    C', 'other/', '  D']);
+		});
+
+		it('marks the folder, so the menu can offer to show sub-folders again', () => {
+			const t = tree(notes, { flatFolders: ['foo'] });
+			expect(t.root().folders.map((f) => f.isFlat)).toEqual([true, false]);
+		});
+
+		it('follows a moved folder to the top level and drops a hidden one', () => {
+			const t = tree(notes, { flatFolders: ['foo/bar', 'other'], topLevelFolders: ['foo/bar'], hiddenFolders: ['other'] });
+			expect(outline(t, t.root())).toEqual(['bar/', '  A', '  B', 'foo/', '  qux/', '    C']);
+		});
+
+		it('stops compacting at a flat folder', () => {
+			const t = tree([note('A', 'foo/bar/baz'), note('B', 'foo/bar/qux')], {
+				compactFolders: true,
+				flatFolders: ['foo/bar'],
+			});
+			expect(outline(t, t.root())).toEqual(['foo/bar/', '  A', '  B']);
+		});
+
+		it('opens the flat folder when a tag inside it is revealed', () => {
+			const t = tree(notes, { flatFolders: ['foo'] });
+			expect(t.pathToTag('foo/bar/baz')?.map((n) => n.label)).toEqual(['foo']);
+			expect(t.pathToNote('A.md')?.map((n) => n.label)).toEqual(['foo']);
+		});
+
+		it('narrows all its notes down with filter folders, not just the ones shown directly', () => {
+			const withStatus = [
+				note('A', 'foo/bar', 'status/done'),
+				note('B', 'foo/qux', 'status/active'),
+				note('C', 'foo/qux', 'status/active'),
+			];
+			const t = tree(withStatus, { flatFolders: ['foo'], filterFolders: true });
+			const foo = t.root().folders[0];
+			expect(foo && outline(t, t.children(foo), 1)).toEqual(['A', 'B', 'C', '~status/']);
+		});
+
+		it('keeps sub-folders inside filter folders, where they do the narrowing', () => {
+			const withStatus = [
+				note('A', 'source/book', 'status/done'),
+				note('B', 'source/book', 'status/active'),
+				note('C', 'source/book'),
+			];
+			const t = tree(withStatus, { flatFolders: ['status'], filterFolders: true });
+			const book = sourceBook(t);
+			const status = book && t.children(book).filters[0];
+			expect(status && outline(t, t.children(status))).toEqual(['active/', '  B', 'done/', '  A']);
+		});
+	});
+
 	describe('folder order', () => {
 		it('puts the folders ordered by hand first, in that order', () => {
 			const notes = [note('A', 'aa'), note('B', 'bb'), note('C', 'cc'), note('D', 'dd')];
@@ -137,11 +205,44 @@ describe('TagTree', () => {
 			expect(t.root().folders.map((f) => f.label)).toEqual(['cc', 'bb', 'aa']);
 		});
 
+		it('puts the folders kept last after the ones left to the sort order', () => {
+			const notes = [note('A', 'aa'), note('B', 'bb'), note('C', 'cc'), note('D', 'dd')];
+			const t = tree(notes, { folderOrder: ['dd'], folderOrderEnd: ['bb', 'aa'] });
+			expect(t.root().folders.map((f) => f.label)).toEqual(['dd', 'cc', 'bb', 'aa']);
+		});
+
+		it('keeps them last under any sort order', () => {
+			const notes = [note('A', 'aa'), note('B', 'bb'), note('C', 'bb'), note('D', 'cc')];
+			const t = tree(notes, { folderOrderEnd: ['bb'], folderSort: 'count-desc' });
+			expect(t.root().folders.map((f) => f.label)).toEqual(['aa', 'cc', 'bb']);
+		});
+
 		it('orders sub-folders among their own siblings', () => {
 			const notes = [note('A', 'foo/aa'), note('B', 'foo/bb'), note('C', 'foo/cc')];
-			const t = tree(notes, { folderOrder: ['foo/cc'] });
+			const t = tree(notes, { folderOrder: ['foo/cc'], folderOrderEnd: ['foo/aa'] });
 			const foo = t.root().folders[0];
-			expect(foo && t.children(foo).folders.map((f) => f.label)).toEqual(['cc', 'aa', 'bb']);
+			expect(foo && t.children(foo).folders.map((f) => f.label)).toEqual(['cc', 'bb', 'aa']);
+		});
+
+		it('goes by the tag as written in notes, so a moved folder keeps its place', () => {
+			const notes = [note('A', 'aa'), note('B', 'foo/bar'), note('C', 'cc')];
+			const t = tree(notes, { topLevelFolders: ['foo/bar'], folderOrder: ['foo/bar'] });
+			expect(t.root().folders.map((f) => f.label)).toEqual(['bar', 'aa', 'cc']);
+		});
+
+		it('ignores folders that are not shown, so they take up no place', () => {
+			const notes = [note('A', 'aa'), note('B', 'bb'), note('C', 'cc')];
+			const t = tree(notes, { hiddenFolders: ['bb'], folderOrder: ['bb', 'cc'], folderOrderEnd: ['aa'] });
+			expect(t.root().folders.map((f) => f.label)).toEqual(['cc', 'aa']);
+		});
+
+		it('marks the folders kept last, so the menu and the pane can tell', () => {
+			const notes = [note('A', 'aa'), note('B', 'foo/bar')];
+			const t = tree(notes, { topLevelFolders: ['foo/bar'], folderOrderEnd: ['foo/bar'] });
+			expect(t.root().folders.map((f) => [f.label, f.isPinned])).toEqual([
+				['aa', false],
+				['bar', true],
+			]);
 		});
 
 		it('leaves filter folders to the sort order', () => {
@@ -200,6 +301,23 @@ describe('TagTree', () => {
 			}
 		});
 
+	});
+
+	describe('level tags', () => {
+		it('gives the tag a folder stands for at its own level, as written in notes', () => {
+			const t = tree([note('A', 'Foo/Bar/baz')], { compactFolders: true });
+			const compacted = t.root().folders[0]!;
+			// The folder shows as "Foo/Bar/baz", but it sits where "foo" does.
+			expect(compacted.label).toBe('Foo/Bar/baz');
+			expect(t.levelTag(compacted)).toBe('foo');
+		});
+
+		it('gives the tag a moved folder came from', () => {
+			const t = tree([note('A', 'foo/bar/baz')], { topLevelFolders: ['foo/bar'] });
+			const bar = t.root().folders[0]!;
+			expect(t.levelTag(bar)).toBe('foo/bar');
+			expect(t.levelTag(t.children(bar).folders[0]!)).toBe('foo/bar/baz');
+		});
 	});
 
 	describe('source tags', () => {

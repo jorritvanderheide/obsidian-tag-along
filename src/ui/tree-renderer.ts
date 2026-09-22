@@ -5,7 +5,10 @@ import { type Children, type FolderNode, isInsideFolder, type TagTree } from '..
 
 export interface FolderRow {
 	node: FolderNode;
+	/** The whole folder: its title row and its contents. */
 	itemEl: HTMLElement;
+	/** The row itself, which is what is clicked, focused and dragged. */
+	selfEl: HTMLElement;
 	childrenEl: HTMLElement;
 	iconEl: HTMLElement;
 	depth: number;
@@ -66,7 +69,7 @@ export class TreeRenderer {
 		const expanded = this.state.isExpanded(row.node.key);
 		row.itemEl.toggleClass('is-collapsed', !expanded);
 		row.iconEl.toggleClass('is-collapsed', !expanded);
-		row.itemEl.querySelector(':scope > .nav-folder-title')?.setAttribute('aria-expanded', String(expanded));
+		row.selfEl.setAttribute('aria-expanded', String(expanded));
 		row.childrenEl.empty();
 		this.forgetRemovedRows(row.node.key);
 		if (expanded) this.renderChildren(tree, tree.children(row.node), row.childrenEl, row.depth + 1);
@@ -87,12 +90,28 @@ export class TreeRenderer {
 		};
 	}
 
+	/** The folder row an event happened in, if any. */
+	folderRowAt(target: EventTarget | null): FolderRow | undefined {
+		const key = (target as HTMLElement | null)?.closest<HTMLElement>('.nav-folder-title')?.dataset.key;
+		return key === undefined ? undefined : this.folderRows.get(key);
+	}
+
+	/** The note row an event happened in, if any. */
+	noteRowAt(target: EventTarget | null): HTMLElement | undefined {
+		return (target as HTMLElement | null)?.closest<HTMLElement>('.nav-file-title') ?? undefined;
+	}
+
+	/** The row of a note as it is drawn in one folder; the key is empty at the top of the tree. */
+	noteRow(path: string, folderKey: string): HTMLElement | undefined {
+		return this.noteRows.get(path)?.find((el) => this.rowId(el) === noteRowId(folderKey, path));
+	}
+
 	/** An id that finds the same row again after a redraw. */
 	rowId(el: HTMLElement): string {
 		if (el.dataset.key !== undefined) return `folder:${el.dataset.key}`;
 		const parent = el.parentElement?.parentElement?.closest('.nav-folder');
 		const parentKey = parent?.querySelector<HTMLElement>(':scope > .nav-folder-title')?.dataset.key ?? '';
-		return `note:${parentKey}:${el.dataset.path ?? ''}`;
+		return noteRowId(parentKey, el.dataset.path ?? '');
 	}
 
 	findRow(id: string): HTMLElement | undefined {
@@ -117,8 +136,15 @@ export class TreeRenderer {
 	}
 
 	private renderChildren(tree: TagTree, children: Children, parentEl: HTMLElement, depth: number): void {
-		for (const node of children.folders) this.renderFolder(tree, node, parentEl, depth);
+		// Only the top of the tree has pinned folders; deeper levels leave the box alone.
+		const pinned = depth === 0 ? children.folders.filter((node) => node.isPinned) : [];
+		for (const node of children.folders) if (!pinned.includes(node)) this.renderFolder(tree, node, parentEl, depth);
 		for (const note of children.notes) this.renderNote(note, parentEl, depth);
+		// Pinned folders go below the untagged notes, in one box that styles.css puts at the bottom.
+		if (pinned.length > 0) {
+			const pinnedEl = parentEl.createDiv({ cls: 'tag-explorer-pinned' });
+			for (const node of pinned) this.renderFolder(tree, node, pinnedEl, depth);
+		}
 		for (const node of children.filters) this.renderFolder(tree, node, parentEl, depth);
 	}
 
@@ -157,7 +183,7 @@ export class TreeRenderer {
 		}
 
 		const childrenEl = itemEl.createDiv({ cls: 'tree-item-children nav-folder-children' });
-		this.folderRows.set(node.key, { node, itemEl, childrenEl, iconEl, depth });
+		this.folderRows.set(node.key, { node, itemEl, selfEl, childrenEl, iconEl, depth });
 		if (expanded) this.renderChildren(tree, tree.children(node), childrenEl, depth + 1);
 	}
 
@@ -194,6 +220,10 @@ export class TreeRenderer {
 			else if (kept.length !== rows.length) this.noteRows.set(path, kept);
 		}
 	}
+}
+
+function noteRowId(folderKey: string, path: string): string {
+	return `note:${folderKey}:${path}`;
 }
 
 function capitalize(label: string): string {

@@ -1,7 +1,7 @@
 {
 	"id": "tag-explorer",
 	"name": "Tag Explorer",
-	"version": "2.1.0",
+	"version": "2.0.0",
 	"minAppVersion": "1.13.0",
 	"description": "Navigate your vault through a tag-generated folder tree.",
 	"author": "Jorrit van der Heide",

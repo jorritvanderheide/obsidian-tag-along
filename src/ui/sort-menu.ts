@@ -1,6 +1,6 @@
 import { Menu } from 'obsidian';
 import type { FolderSort, NoteSort } from '../core/sort';
-import type TagExplorerPlugin from '../main';
+import type { PluginHost } from '../host';
 
 const NOTE_SORT_LABELS: Record<NoteSort, string> = {
 	'name-asc': 'Name (A to Z)',
@@ -19,7 +19,7 @@ const FOLDER_SORT_LABELS: Record<FolderSort, string> = {
 };
 
 /** The toolbar's sort menu: one choice for notes and one for folders. */
-export function showSortMenu(evt: MouseEvent, plugin: TagExplorerPlugin): void {
+export function showSortMenu(evt: MouseEvent, plugin: PluginHost): void {
 	const { noteSort, folderSort } = plugin.settings;
 	const menu = new Menu();
 	menu.addItem((item) => item.setSection('notes').setTitle('Notes').setIsLabel(true));

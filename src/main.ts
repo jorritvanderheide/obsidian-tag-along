@@ -1,6 +1,7 @@
 import { debounce, Notice, Plugin, TFile, TFolder } from 'obsidian';
 import { LastResult } from './core/cache';
 import { fixFolderCase, renameFolderPaths } from './core/paths';
+import type { PluginHost } from './host';
 import { TagTree } from './core/tree';
 import { NoteIndex } from './note-index';
 import {
@@ -14,7 +15,7 @@ import { TagExplorerSettingTab } from './ui/settings-tab';
 import { registerTagClicks } from './tag-clicks';
 import { TagExplorerView, VIEW_TYPE } from './ui/view';
 
-export default class TagExplorerPlugin extends Plugin {
+export default class TagExplorerPlugin extends Plugin implements PluginHost {
 	settings: TagExplorerSettings = DEFAULT_SETTINGS;
 	readonly index = new NoteIndex(this.app, () => this.settings);
 	/** One tree for all open views, rebuilt only when the notes or settings changed. */

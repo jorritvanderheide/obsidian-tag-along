@@ -21,6 +21,21 @@
 	border-inline-start: var(--tag-explorer-offset) solid transparent;
 }
 
+/*
+ * The pinned folders sit in a box at the bottom of the pane: the tree fills the pane, so the box
+ * takes up whatever space is left over. Once the tree is taller than the pane, the box scrolls
+ * along at the end of it.
+ */
+.workspace-leaf-content[data-type='tag-explorer-view'] .tag-explorer-tree {
+	display: flex;
+	flex-direction: column;
+	min-height: 100%;
+}
+
+.workspace-leaf-content[data-type='tag-explorer-view'] .tag-explorer-pinned {
+	margin-top: auto;
+}
+
 /* Filter folders narrow the parent's notes down by another namespace. */
 .workspace-leaf-content[data-type='tag-explorer-view'] .tag-explorer-filter {
 	color: var(--text-faint);

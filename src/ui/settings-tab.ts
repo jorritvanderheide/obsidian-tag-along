@@ -1,9 +1,16 @@
-import { type App, PluginSettingTab, type SettingDefinitionAddItem, type SettingDefinitionItem, type TFolder } from 'obsidian';
+import {
+	type App,
+	PluginSettingTab,
+	type SettingDefinitionAddItem,
+	type SettingDefinitionItem,
+	type SettingDefinitionList,
+	type TFolder,
+} from 'obsidian';
 import type TagExplorerPlugin from '../main';
 import { ChoiceModal } from './choice-modal';
 
 type FolderListKey = 'includedFolders' | 'excludedFolders';
-type TagListKey = 'hiddenFolders' | 'topLevelFolders' | 'folderOrder' | 'excludedTags';
+type TagListKey = 'hiddenFolders' | 'topLevelFolders' | 'flatFolders' | 'folderOrder' | 'folderOrderEnd' | 'excludedTags';
 type ListKey = TagListKey | FolderListKey;
 
 export class TagExplorerSettingTab extends PluginSettingTab {
@@ -40,14 +47,26 @@ export class TagExplorerSettingTab extends PluginSettingTab {
 					{
 						type: 'page',
 						name: 'Folder order',
-						desc: 'Folders you dragged into place in the tree, shown before the folders that follow the sort order. Remove one to let it follow the sort order again.',
-						displayValue: () => countLabel(settings().folderOrder.length, 'folder', 'folders'),
+						desc: 'Folders you dragged into place in the tree, and folders pinned to the bottom of the pane. Every other folder follows the sort order, in between the two. Remove a folder here to let it follow the sort order again.',
+						displayValue: () =>
+							countLabel(settings().folderOrder.length + settings().folderOrderEnd.length, 'folder', 'folders'),
 						items: [
-							this.list(
-								'folderOrder',
-								settings().folderOrder.map((tag) => `#${tag}`),
-								'No folders put in order. Drag a folder in the tree to change where it appears.',
-							),
+							{
+								...this.list(
+									'folderOrder',
+									settings().folderOrder.map((tag) => `#${tag}`),
+									'No folders put in order. Drag a folder in the tree to change where it appears.',
+								),
+								heading: 'Shown first',
+							},
+							{
+								...this.list(
+									'folderOrderEnd',
+									settings().folderOrderEnd.map((tag) => `#${tag}`),
+									'No folders pinned. Drag a folder below all the others, or right-click it and choose "Pin to bottom".',
+								),
+								heading: 'Pinned to the bottom',
+							},
 						],
 					},
 					{
@@ -62,6 +81,21 @@ export class TagExplorerSettingTab extends PluginSettingTab {
 								'Add a folder',
 								'Choose a sub-tag to move...',
 								'No folders moved to the top level.',
+							),
+						],
+					},
+					{
+						type: 'page',
+						name: 'Flat folders',
+						desc: 'These folders list every note below them, from their sub-tags too, instead of showing sub-folders. You can also right-click a folder and choose "Hide sub-folders".',
+						displayValue: () => countLabel(settings().flatFolders.length, 'folder', 'folders'),
+						items: [
+							this.tagList(
+								'flatFolders',
+								() => withSubTags(allTags()),
+								'Flatten a folder',
+								'Choose a folder to flatten...',
+								'No flat folders.',
 							),
 						],
 					},
@@ -153,7 +187,7 @@ export class TagExplorerSettingTab extends PluginSettingTab {
 		await this.plugin.updateSettings({ [key]: value });
 	}
 
-	private list(key: ListKey, names: string[], emptyState: string, addItem?: SettingDefinitionAddItem): SettingDefinitionItem {
+	private list(key: ListKey, names: string[], emptyState: string, addItem?: SettingDefinitionAddItem): SettingDefinitionList {
 		return {
 			type: 'list',
 			emptyState,
@@ -171,7 +205,7 @@ export class TagExplorerSettingTab extends PluginSettingTab {
 		addLabel: string,
 		placeholder: string,
 		emptyState: string,
-	): SettingDefinitionItem {
+	): SettingDefinitionList {
 		const action = () =>
 			this.pick(
 				choices().filter((tag) => !this.plugin.settings[key].includes(tag)),
@@ -187,7 +221,7 @@ export class TagExplorerSettingTab extends PluginSettingTab {
 		);
 	}
 
-	private folderList(key: FolderListKey, addLabel: string, emptyState: string): SettingDefinitionItem {
+	private folderList(key: FolderListKey, addLabel: string, emptyState: string): SettingDefinitionList {
 		const action = () =>
 			this.pick(
 				this.app.vault.getAllFolders(false).filter((folder) => !this.plugin.settings[key].includes(folder.path)),
@@ -205,6 +239,12 @@ export class TagExplorerSettingTab extends PluginSettingTab {
 	private addTo(key: ListKey, value: string): void {
 		void this.plugin.updateSettings((s) => ({ [key]: [...s[key], value] }));
 	}
+}
+
+/** The tags that have sub-tags: only those have sub-folders to flatten. */
+function withSubTags(tags: string[]): string[] {
+	const parents = new Set(tags.filter((tag) => tag.includes('/')).map((tag) => tag.slice(0, tag.lastIndexOf('/'))));
+	return tags.filter((tag) => parents.has(tag));
 }
 
 function countLabel(count: number, singular: string, plural: string): string {

@@ -1,8 +1,8 @@
 import { FOLDER_SORTS, type FolderSort, NOTE_SORTS, type NoteSort } from './core/sort';
-import { normalizeTag } from './core/tags';
+import { namespaceOf, normalizeTag } from './core/tags';
 
 /** Bump when stored settings change shape, and add a step to `upgrades`. */
-export const SETTINGS_VERSION = 3;
+export const SETTINGS_VERSION = 4;
 
 export interface TagExplorerSettings {
 	version: typeof SETTINGS_VERSION;
@@ -17,8 +17,12 @@ export interface TagExplorerSettings {
 	hiddenFolders: string[];
 	/** Sub-tags that get a top-level folder of their own, as written in notes. */
 	topLevelFolders: string[];
-	/** Folders put in order by hand, shown before the ones left to the sort order. */
+	/** Folders that list every note below them instead of showing sub-folders, as written in notes. */
+	flatFolders: string[];
+	/** Folders put in order by hand, shown before the ones left to the sort order, as written in notes. */
 	folderOrder: string[];
+	/** Folders put in order by hand, shown after the ones left to the sort order, as written in notes. */
+	folderOrderEnd: string[];
 	/** Icon ids by tag, as written in notes. */
 	folderIcons: Record<string, string>;
 	includedFolders: string[];
@@ -38,7 +42,9 @@ export const DEFAULT_SETTINGS: TagExplorerSettings = {
 	openTagsInExplorer: false,
 	hiddenFolders: [],
 	topLevelFolders: [],
+	flatFolders: [],
 	folderOrder: [],
+	folderOrderEnd: [],
 	folderIcons: {},
 	includedFolders: [],
 	excludedFolders: [],
@@ -62,6 +68,7 @@ export function applySettingsChange(current: TagExplorerSettings, change: Settin
 const upgrades: Record<number, (raw: Raw) => Raw> = {
 	1: fromVersion1,
 	2: fromVersion2,
+	3: fromVersion3,
 };
 
 /**
@@ -75,6 +82,7 @@ export function migrateSettings(data: unknown): TagExplorerSettings {
 		source = upgrades[version]?.(source) ?? {};
 	}
 	const d = DEFAULT_SETTINGS;
+	const folderOrder = tags(source.folderOrder);
 	return {
 		version: SETTINGS_VERSION,
 		noteSort: oneOf(NOTE_SORTS, source.noteSort, d.noteSort),
@@ -87,7 +95,10 @@ export function migrateSettings(data: unknown): TagExplorerSettings {
 		openTagsInExplorer: bool(source.openTagsInExplorer, d.openTagsInExplorer),
 		hiddenFolders: tags(source.hiddenFolders),
 		topLevelFolders: subTags(source.topLevelFolders),
-		folderOrder: tags(source.folderOrder),
+		flatFolders: tags(source.flatFolders),
+		folderOrder,
+		// A folder is kept first or kept last, never both.
+		folderOrderEnd: tags(source.folderOrderEnd).filter((tag) => !folderOrder.includes(tag)),
 		folderIcons: icons(source.folderIcons),
 		includedFolders: folders(source.includedFolders),
 		excludedFolders: folders(source.excludedFolders),
@@ -129,6 +140,29 @@ function fromVersion2(raw: Raw): Raw {
 		...raw,
 		topLevelFolders: pinned.filter((tag) => tag.includes('/')),
 		folderOrder: pinned.map(lastSegment),
+	};
+}
+
+/**
+ * The folder order went by the name a folder is shown with; it now goes by the tag it comes from,
+ * like the other folder settings. Only folders moved to the top level are shown under another name,
+ * so those entries get their old parent back. Two moved tags can share a name; the first one wins.
+ */
+function fromVersion3(raw: Raw): Raw {
+	const sources = new Map<string, string>();
+	for (const tag of subTags(raw.topLevelFolders)) {
+		const name = lastSegment(tag);
+		if (!sources.has(name)) sources.set(name, tag);
+	}
+	const toSource = (tag: string) => {
+		const name = namespaceOf(tag);
+		const source = sources.get(name);
+		return source === undefined ? tag : source + tag.slice(name.length);
+	};
+	return {
+		...raw,
+		folderOrder: tags(raw.folderOrder).map(toSource),
+		folderOrderEnd: tags(raw.folderOrderEnd).map(toSource),
 	};
 }
 
