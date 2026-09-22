@@ -2,121 +2,92 @@
 
 [![Donate](https://liberapay.com/assets/widgets/donate.svg)](https://liberapay.com/BW20)
 
-> **A fork of [TagFolder](https://github.com/vrtmrz/obsidian-tagfolder) by vorotamoroz.**
+Browse your vault as a folder tree built from your tags.
 
-Navigate your vault through a tag-generated folder tree. Each tag namespace (`domain/`, `source/`, `status/`, …) becomes an independent folder tree. A note tagged `#domain/coding` and `#source/book` appears under *both* `domain/coding` and `source/book` simultaneously — the same file in two places at once, like a symlink.
+Each tag namespace (`domain/`, `source/`, `status/`, …) becomes its own tree. A note appears under every tag it has, so a note tagged `#domain/coding` and `#source/book` shows up in both places.
 
 ```
 Meeting notes : #domain/work    #status/active
 Research doc  : #domain/coding  #source/book   #status/active
-Book summary  : #source/book  #status/done
+Book summary  : #source/book    #status/done
 
 domain/
   coding/   → Research doc
   work/     → Meeting notes
 source/
-  book/     → Research doc, Book summary
+  book/     → Book summary, Research doc
 status/
   active/   → Meeting notes, Research doc
   done/     → Book summary
 ```
 
-## Changes from upstream
+A note is listed in the deepest folder for each of its tags. A note tagged both `#domain` and `#domain/coding` appears only in `domain/coding`.
 
-**Bug fixes**
+## Features
 
-- **`ignoreTags` now matches prefixes** — adding `source` to the ignore list hides `source/book`, `source/ai`, and all other `source/*` sub-tags, not just the bare `source` tag.
-- **Deduplication is namespace-aware** — notes tagged with both `domain/coding` and `source/book` now correctly appear under both namespaces. Previously the deduplication logic would silently drop the note from whichever namespace was processed second.
+- **Compact folders.** A folder whose only content is one sub-folder is shown as a single entry, such as `project/website`.
+- **Filter folders.** Inside a folder, your other namespaces appear as grayed-out folders below the notes. Open one to narrow the folder's notes down by that namespace. For example, open `source/book`, then `status`, to see which book notes are `active` or `done`. Filters narrow down the notes listed directly in the folder (sub-folders already split up the rest). They can be chained, and only appear when they actually narrow the notes down.
+- **Sorting.** Sort notes by name, modified or created time, and folders by name or number of notes, from the toolbar.
+- **Expand or collapse all** folders with one button.
+- **Your own order.** Drag a folder up or down to put it where you want it, at any level. The folders you place stay at the top of their level; the rest follow the sort order.
+- **Top-level folders.** Right-click a sub-folder and choose **Move to top level** to move a sub-tag out of its parent into a top-level folder of its own, merged with a folder of the same name.
+- **Folder icons.** Right-click a folder and choose **Set icon...** to show one of Obsidian's icons in place of its collapse arrow.
+- **Copy tags.** Right-click a folder to copy the tags that lead to it, such as `#domain/phd #source/ai`.
+- **Note menu.** Right-click a note for the same menu as in the core file explorer: open in a new tab or to the right, make a copy, rename, delete, plus the items other plugins add.
+- **Selecting several notes.** Alt-click to select notes and Shift-click to select a range, like the core file explorer. Right-click the selection to delete or move the notes. Press Escape to clear it.
+- **Reveal notes and tags.** The **Reveal active note** command, and **Reveal in Tag Explorer** in other file menus, open the folders down to a note. With **Open tags in Tag Explorer** on, clicking a tag in a note opens its folder (Ctrl/Cmd-click still searches).
+- **Keyboard.** Use the arrow keys to move through the tree and open or close folders, Enter to open a note (Ctrl/Cmd+Enter in a new tab), F2 to rename and Delete to delete.
+- **Hover previews** with Ctrl/Cmd held, like the core file explorer.
+- Open folders are remembered per pane.
 
-**New features**
+## Usage
 
-- **Namespace-scoped sub-folders** — inside a tag folder, only sub-folders from the same root namespace are shown. Tags from other namespaces no longer bleed in as nested children. Togglable from the toolbar (on by default).
-- **Cross-namespace filter folders** — when namespace isolation is off, a limited set of cross-namespace entry points appears inside a folder so you can narrow down by another dimension without leaving. Depth is configurable from the toolbar.
-- **Folder icons** — assign a custom icon to any tag folder via its context menu.
-- **Item count** — optionally show the number of files next to each folder.
-- **Compact empty parent folders** — toggle collapsing of intermediate empty folders into a single `parent/child` entry from the toolbar.
-
-**Removed from upstream**
-
-- Link tree view and list view (ScrollView, TagFolderList) — this plugin is tag-only.
-- Freshness virtual tags.
-- Per-tag metadata system (pin/label/mark/redirect) — replaced by a simpler pinned folders list and folder icons.
-
-## Installation
-
-Install manually by copying `main.js` and `manifest.json` into `.obsidian/plugins/tag-explorer/`, then enable it in Settings → Community plugins.
-
-Once installed, open the tag tree via `Ctrl+P` → *Show Tag Explorer*, or enable *Open on startup* in settings.
-
-## Toolbar
-
-| Button | Action |
-|--------|--------|
-| Sort order | Cycle through sort modes for files |
-| Search | Open the search bar to filter tags and files |
-| Isolate namespaces | Toggle namespace-scoped sub-folders on/off |
-| Filter folder depth | (Visible when isolation is off) Set how many cross-namespace levels deep filter folders appear |
-| Compact empty parents | Toggle collapsing of empty parent folders into `parent/child` |
-| Collapse all | Collapse all open folders |
-
-## Search
-
-Type in the search bar to filter the tree. Matches are evaluated against tag names.
-
-| Syntax | Meaning |
-|--------|---------|
-| `source` | tag contains "source" |
-| `#source` | tag starts with "source" (namespace prefix) |
-| `-source` | exclude tags containing "source" |
-| `-#domain` | exclude the entire `domain/*` namespace |
-| `A B` | AND — must match both |
-| `A \| B` | OR — match A or B |
+Open the tree with the ribbon icon or the **Tag Explorer: Open** command. The buttons at the top of the pane change the sort order, toggle compact folders and filter folders, and expand or collapse all folders.
 
 ## Settings
 
-### Files
+| Setting | What it does |
+|---|---|
+| Compact folders | Show a folder and its only sub-folder as one entry. |
+| Filter folders | Show your other namespaces as grayed-out folders to narrow a folder's notes down. |
+| Hidden folders | These tags and their sub-tags get no folder, but their notes still appear under their other tags. Folders moved to the top level stay visible even when the tag they came from is hidden. |
+| Folder order | The folders you dragged into place, shown before the ones that follow the sort order. Remove one to let it follow the sort order again. |
+| Top-level folders | These sub-tags get a top-level folder of their own, merged with a folder of the same name. |
+| Show untagged notes | List notes without tags at the top of the tree. |
+| Show note titles | Show the `title` property or first heading instead of the file name. |
+| Show note counts | Show how many notes each folder contains. |
+| Open tags in Tag Explorer | Clicking a tag in a note opens its folder instead of searching for it. |
+| Included folders | Only notes in these folders appear. Leave empty to use the whole vault. |
+| Excluded folders | Notes in these folders are left out, even inside an included folder. |
+| Excluded tags | Notes with these tags (or their sub-tags) are left out of the tree. |
 
-**File title format** — How file names are displayed in the tag tree: path + name, name only, or name + path.
+## Upgrading from 1.x
 
-**File sort order** — Sort files by display name, filename, modified time, created time, or full path. Direction can be ascending or descending.
+Settings carry over automatically. Some 1.x options were removed:
 
-**Show display name** — Show the note's title from frontmatter or the first H1 heading instead of the filename.
+- **Excluded tags** replaces "Exclude notes with tag" and "Archive tags": notes with these tags are left out of the tree.
+- "Hide tags" is now **Hidden folders**. It hides a tag and its sub-tags; matching on the last part of a tag (`old` hiding `domain/old`) is gone.
+- "Scan only these folders" is now **Included folders**.
+- "Intercept tag clicks" is now **Open tags in Tag Explorer**.
+- Sort orders carry over; sorting by full path became sorting by name.
+- Search, dragging notes onto folders, the file title format and the metadata scan delay were removed.
+- Pinned folders became two settings: **Folder order**, which you set by dragging folders in the tree, and **Top-level folders** for pinned sub-tags. Existing pins carry over to both.
+- 2.0 requires Obsidian 1.13 or newer.
 
-**Title frontmatter key** — Dotted path to the frontmatter field used as the display title (e.g. `title` or `meta.title`).
+## Development
 
-**Show item count** — Display the number of files in each tag folder, to the right of the folder name.
+```sh
+npm install
+npm run dev     # rebuild on change
+npm run build   # typecheck and production build
+npm run lint
+npm test
+```
 
-### Tags
+Copy `main.js`, `manifest.json` and `styles.css` to `<vault>/.obsidian/plugins/tag-explorer/` to try it out.
 
-**Tag sort order** — Sort tag folders by name or by item count, ascending or descending.
+## License
 
-**Intercept tag clicks** — When clicking a tag anywhere in Obsidian, navigate to it in the tag tree instead of opening the default tag search. Ctrl/Shift-click adds or removes exclusions from the search bar.
+Copyright © 2026 Jorrit van der Heide. Licensed under the [EUPL-1.2](LICENSE).
 
-### Arrangement
-
-**Hide files** — Control which files are hidden inside intermediate (non-leaf) tag folders:
-- *Hide nothing* — files appear at every level.
-- *Only intermediates of nested tags* — files are hidden inside nested tag levels.
-- *All intermediates* — files only appear at the deepest level (default).
-
-**Isolate sub-folders by namespace** — When inside a tag folder, only show sub-folders from the same root namespace. Also togglable from the toolbar.
-
-**Keep intermediate empty folders** — Prevent empty parent tag folders from being collapsed into a single `parent/child` entry when all their files live in sub-folders. Also togglable from the toolbar.
-
-**Show untagged files at root** — Display notes with no tags at the top level of the tag tree.
-
-### Filters
-
-**Scan only these folders** — Comma-separated list of vault folders. Only files inside these folders appear in the tag tree. Leave empty to scan the whole vault.
-
-**Exclude folders** — Comma-separated list of folders to exclude (e.g. `templates, archive`).
-
-**Exclude notes with tag** — Notes that have any of these tags are hidden from the tree entirely. Comma-separated.
-
-**Hide tags** — These tags and all their sub-tags are hidden from the tree. Prefix matching applies: `source` also hides `source/book`, `source/ai`, etc. Comma-separated.
-
-**Archive tags** — Notes with these tags are collected under an archive folder at the root and hidden from all other folders. Navigate into the archive folder to see them. Comma-separated.
-
-### Advanced
-
-**Metadata scan delay (ms)** — How long to wait after a file change before refreshing the tag tree. Increase if the tree flickers during rapid edits. Requires plugin reload.
+Tag Explorer started as a fork of [TagFolder](https://github.com/vrtmrz/obsidian-tagfolder) by vorotamoroz. Version 2 is a rewrite that shares no code with it; releases up to 1.1.1 remain available under the MIT license.

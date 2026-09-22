@@ -8,26 +8,20 @@
 # npm
 node_modules
 
-# Don't include compiled JS output in the repo.
-# Build output is uploaded to GitHub releases instead.
+# Don't include the compiled main.js file in the repo.
+# They should be uploaded to GitHub releases instead.
 main.js
-main_org.js
-# tsc side-effect outputs (project uses esbuild, not tsc)
-IconPickerModal.js
-TagFolderView.js
-TagFolderViewBase.js
-store.js
-types.js
-util.js
-v2codebehind.js
 
 # Exclude sourcemaps
 *.map
 
-# Obsidian
+# obsidian
 data.json
 
-# Test and build files
+# Exclude macOS Finder (System Explorer) View States
+.DS_Store
+
+# local env
 .env
 
 # Nix

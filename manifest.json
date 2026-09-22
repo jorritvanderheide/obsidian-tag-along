@@ -1,10 +1,11 @@
 {
 	"id": "tag-explorer",
 	"name": "Tag Explorer",
-	"version": "1.1.1",
-	"minAppVersion": "1.7.2",
+	"version": "2.1.0",
+	"minAppVersion": "1.13.0",
 	"description": "Navigate your vault through a tag-generated folder tree.",
 	"author": "Jorrit van der Heide",
 	"authorUrl": "https://github.com/jorritvanderheide",
+	"fundingUrl": "https://liberapay.com/BW20",
 	"isDesktopOnly": false
 }

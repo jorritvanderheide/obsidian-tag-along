@@ -1,5 +1,5 @@
 {
-  description = "Tag Explorer Obsidian plugin (fork of TagFolder)";
+  description = "Tag Explorer Obsidian plugin";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
@@ -12,44 +12,24 @@
       system:
       let
         pkgs = import nixpkgs { inherit system; };
+        package = builtins.fromJSON (builtins.readFile ./package.json);
       in
       {
-        # Production build
         packages.default = pkgs.buildNpmPackage {
           pname = "obsidian-tag-explorer";
-          version = "1.0.6";
-
+          inherit (package) version;
           src = ./.;
-
-          npmDepsHash = "sha256-OVYflk1Q5k77Dpx8jHfd6ZiUs/SxGSQBt7d6ToPeNAY=";
-
-          # Node 22 for --env-file support and modern ESM
-          nodejs = pkgs.nodejs_22;
-
-          buildPhase = ''
-            npm run build
-          '';
-
+          # Update with: nix run nixpkgs#prefetch-npm-deps -- package-lock.json
+          npmDepsHash = "sha256-2H1sZCx4EuCC3f8FHZHJJwHotH7rNvQw095u2/7orBY=";
+          nodejs = pkgs.nodejs_24;
           installPhase = ''
             mkdir -p $out
             cp main.js manifest.json styles.css $out/
           '';
-
-          # No tests to run
-          doCheck = false;
         };
 
-        # Development shell
         devShells.default = pkgs.mkShell {
-          buildInputs = [
-            pkgs.nodejs_22
-          ];
-
-          shellHook = ''
-            echo "Tag Explorer dev environment"
-            echo "  npm install   — install dependencies"
-            echo "  npm run build — production build"
-          '';
+          buildInputs = [ pkgs.nodejs_24 ];
         };
       }
     );

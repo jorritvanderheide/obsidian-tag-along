@@ -1,177 +1,59 @@
-.workspace-leaf-content[data-type="tag-explorer-view"]>.view-content {
-	padding: 0;
-	height: 100%;
-	overflow: unset;
-}
-
-.override-input {
-	flex-direction: column-reverse;
-}
-
-.nav-file-title.is-selected {
-	background-color: var(--background-modifier-hover);
-	color: var(--text-accent);
-}
-
-.tagfolder-tag::before {
-	color: inherit;
-	font: inherit;
-}
-
-.tagfolder-tag.tag-tag::before {
-	margin-left: 0px;
-	margin-right: 0px;
-}
-
-.tagfolder-tag.tag-tag span.tf-tag-each:empty {
-	display: none;
-}
-
-.tagfolder-tag.tag-tag span.tf-tag-each {
-	text-transform: capitalize;
-}
-
-.tagfolder-tag.tag-tag span.tf-tag-separator + span.tf-tag-each {
-	text-transform: none;
-}
-
-.tagfolder-tag.tag-tag.tf-tag span.tf-tag-each:first-child:not(:empty):before {
-	content: "";
-	margin-left: 0;
-}
-
-.tagfolder-tag.tag-tag span.tf-tag-each::before {
-	content: "";
-	margin-left: 0;
-	margin-right: 0;
-}
-
-.tf-taglist {
-	white-space: nowrap;
-	text-overflow: ellipsis;
-	overflow: hidden;
-	display: inline-block;
-	flex-shrink: 100;
-	margin-left: auto;
-	text-align: right;
-}
-
-.tf-taglist:not(:empty) {
-	min-width: 3em;
-}
-
-.tf-taglist .tf-tag {
-	background-color: var(--background-secondary-alt);
-	border-radius: 4px;
-	padding: 2px 4px;
-	margin-left: 4px;
-	color: var(--nav-item-color);
-}
-
-.nav-folder-title:hover .tagfolder-quantity,
-.nav-file-title:hover .tf-taglist {
-	color: var(--text-on-accent);
-}
-
-.nav-folder-title:hover .tagfolder-quantity span,
-.nav-file-title:hover .tf-taglist span.tf-tag {
-	color: var(--text-on-accent);
-	background-color: var(--interactive-accent-hover);
-}
-
-
-.lsl-f {
-	flex-direction: row;
+.workspace-leaf-content[data-type='tag-explorer-view'] .view-content {
 	display: flex;
-	flex-grow: 1;
-	overflow: hidden;
-	flex-shrink: 1;
-}
-
-.lsl-f:not(:last-child) {
-	min-width: 3em;
-}
-
-.lsl-f:empty::before {
-	content: "...";
-}
-
-.tagfolder-titletagname {
-	flex-grow: 1;
-	text-overflow: ellipsis;
-	white-space: nowrap;
+	flex-direction: column;
+	padding: 0;
 	overflow: hidden;
 }
 
-.tagfolder-quantity span {
-	background-color: var(--background-secondary-alt);
-	color: var(--nav-item-color);
-	border-radius: 4px;
-	padding: 2px 4px;
+/*
+ * Nested rows are pulled back to the left edge and pushed in again with a transparent border,
+ * so hover and active highlights span the full width while the content stays indented.
+ * The indent per level matches `.tree-item-children` in Obsidian's own CSS.
+ */
+.workspace-leaf-content[data-type='tag-explorer-view'] .tree-item-self {
+	--tag-explorer-indent: calc(
+		var(--nav-item-children-margin-start, var(--nav-item-children-margin-left, 0px)) +
+			var(--nav-item-children-padding-start, var(--nav-item-children-padding-left, 0px)) +
+			var(--nav-indentation-guide-width, 0px)
+	);
+	--tag-explorer-offset: calc(var(--tag-explorer-depth, 0) * var(--tag-explorer-indent));
+	margin-inline-start: calc(-1 * var(--tag-explorer-offset));
+	border-inline-start: var(--tag-explorer-offset) solid transparent;
 }
 
-.tagfolder-quantity {
-	width: 3em;
-	text-align: right;
-	cursor: pointer;
-	margin-left: auto;
+/* Filter folders narrow the parent's notes down by another namespace. */
+.workspace-leaf-content[data-type='tag-explorer-view'] .tag-explorer-filter {
+	color: var(--text-faint);
 }
 
-.tag-folder-title {
-	max-width: 100%;
+.workspace-leaf-content[data-type='tag-explorer-view'] .tag-explorer-filter:hover {
+	color: var(--nav-item-color-hover);
 }
 
-.tagfolder-folder-mark {
-	width: var(--icon-size);
-	height: var(--icon-size);
+/*
+ * While a folder is dragged, the folder it would land above or below gets a line, drawn inside it
+ * so nothing moves. An open folder is lined around its contents, where the dragged folder lands.
+ */
+.workspace-leaf-content[data-type='tag-explorer-view'] .tag-explorer-drop-before {
+	box-shadow: inset 0 2px 0 0 var(--interactive-accent);
+}
+
+.workspace-leaf-content[data-type='tag-explorer-view'] .tag-explorer-drop-after {
+	box-shadow: inset 0 -2px 0 0 var(--interactive-accent);
+}
+
+/* A folder's own icon replaces the collapse arrow and follows the row's color, like the arrow. */
+.workspace-leaf-content[data-type='tag-explorer-view'] .tag-explorer-folder-icon {
+	color: currentColor;
+}
+
+.tag-explorer-icon-suggestion {
 	display: flex;
 	align-items: center;
-	justify-content: center;
+	gap: var(--size-4-2);
 }
 
-/* Icon picker modal */
-.tagfolder-icon-picker .tagfolder-icon-search {
-	width: 100%;
-	margin-bottom: 8px;
-}
-
-.tagfolder-icon-picker .tagfolder-icon-grid {
-	display: grid;
-	grid-template-columns: repeat(auto-fill, minmax(32px, 1fr));
-	gap: 2px;
-	max-height: 400px;
-	overflow-y: auto;
-}
-
-.tagfolder-icon-picker .tagfolder-icon-btn {
-	width: 32px;
-	height: 32px;
-	padding: 0;
+.tag-explorer-icon-suggestion-icon {
 	display: flex;
-	align-items: center;
-	justify-content: center;
-	cursor: pointer;
-	border-radius: 4px;
-	background: transparent;
-	border: none;
-	color: var(--text-normal);
-}
-
-.tagfolder-icon-picker .tagfolder-icon-btn:hover {
-	background: var(--background-modifier-hover);
-}
-
-.nav-folder-title.tf-filter-folder {
-	opacity: 0.55;
-}
-
-.nav-folder-title.tf-filter-folder:hover {
-	opacity: 1;
-}
-
-.tree-item.nav-folder.updating {
-	background: linear-gradient(135deg, var(--interactive-accent-hover) 0%, var(--interactive-accent-hover) 50%, rgba(0, 0, 0, 0) 50%, rgba(0, 0, 0, 0) 100%);
-	background-repeat: no-repeat;
-	background-position: 0 0;
-	background-size: 10px 10px;
+	color: var(--icon-color);
 }
