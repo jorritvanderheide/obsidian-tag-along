@@ -1,5 +1,5 @@
 {
-  description = "Tag Explorer Obsidian plugin";
+  description = "Tag Along Obsidian plugin";
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
@@ -16,7 +16,7 @@
       in
       {
         packages.default = pkgs.buildNpmPackage {
-          pname = "obsidian-tag-explorer";
+          pname = "obsidian-tag-along";
           inherit (package) version;
           src = ./.;
           # Update with: nix run nixpkgs#prefetch-npm-deps -- package-lock.json

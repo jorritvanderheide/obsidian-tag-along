@@ -33,7 +33,7 @@ export default defineConfig(
 	...obsidianmd.configs.recommended,
 	{
 		rules: {
-			'obsidianmd/ui/sentence-case': ['warn', { brands: ['Tag Explorer'] }],
+			'obsidianmd/ui/sentence-case': ['warn', { brands: ['Tag Along'] }],
 		},
 	},
 );

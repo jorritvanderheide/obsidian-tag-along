@@ -15,8 +15,8 @@ interface DropTarget {
 	before: boolean;
 }
 
-const DROP_BEFORE = 'tag-explorer-drop-before';
-const DROP_AFTER = 'tag-explorer-drop-after';
+const DROP_BEFORE = 'tag-along-drop-before';
+const DROP_AFTER = 'tag-along-drop-after';
 
 /** Dragging a tag folder to change its order among its siblings. The view forwards its drag events. */
 export class TreeDrag {

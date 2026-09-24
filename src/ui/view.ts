@@ -18,9 +18,9 @@ import { TreeDrag } from './tree-drag';
 import { TreeInput } from './tree-input';
 import { type FolderRow, TreeRenderer } from './tree-renderer';
 
-export const VIEW_TYPE = 'tag-explorer-view';
+export const VIEW_TYPE = 'tag-along-view';
 
-export class TagExplorerView extends ItemView implements HoverParent {
+export class TagAlongView extends ItemView implements HoverParent {
 	hoverPopover: HoverPopover | null = null;
 	navigation = false;
 
@@ -57,7 +57,7 @@ export class TagExplorerView extends ItemView implements HoverParent {
 	}
 
 	getDisplayText(): string {
-		return 'Tag Explorer';
+		return 'Tag Along';
 	}
 
 	getIcon(): string {
@@ -68,7 +68,7 @@ export class TagExplorerView extends ItemView implements HoverParent {
 		this.contentEl.empty();
 		this.buildToolbar(this.contentEl.createDiv({ cls: 'nav-header' }));
 		this.scrollEl = this.contentEl.createDiv({ cls: 'nav-files-container' });
-		this.renderer = new TreeRenderer(this.scrollEl.createDiv({ cls: 'tag-explorer-tree' }), {
+		this.renderer = new TreeRenderer(this.scrollEl.createDiv({ cls: 'tag-along-tree' }), {
 			isExpanded: (key) => this.expanded.has(key),
 			activePath: () => this.activePath,
 			isSelected: (path) => this.input.isSelected(path),

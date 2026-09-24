@@ -6,19 +6,19 @@ import {
 	type SettingDefinitionList,
 	type TFolder,
 } from 'obsidian';
-import type TagExplorerPlugin from '../main';
+import type TagAlongPlugin from '../main';
 import { ChoiceModal } from './choice-modal';
 
 type FolderListKey = 'includedFolders' | 'excludedFolders';
 type TagListKey = 'hiddenFolders' | 'topLevelFolders' | 'flatFolders' | 'folderOrder' | 'folderOrderEnd' | 'excludedTags';
 type ListKey = TagListKey | FolderListKey;
 
-export class TagExplorerSettingTab extends PluginSettingTab {
+export class TagAlongSettingTab extends PluginSettingTab {
 	icon = 'tags';
 
 	constructor(
 		app: App,
-		private readonly plugin: TagExplorerPlugin,
+		private readonly plugin: TagAlongPlugin,
 	) {
 		super(app, plugin);
 	}
@@ -136,7 +136,7 @@ export class TagExplorerSettingTab extends PluginSettingTab {
 						control: { type: 'toggle', key: 'showNoteCount' },
 					},
 					{
-						name: 'Open tags in Tag Explorer',
+						name: 'Open tags in Tag Along',
 						desc: 'Clicking a tag in a note opens its folder here instead of searching for it. Hold Ctrl/Cmd while clicking to search as usual.',
 						control: { type: 'toggle', key: 'openTagsInExplorer' },
 					},

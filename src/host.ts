@@ -1,6 +1,6 @@
 import type { App } from 'obsidian';
 import type { TagTree } from './core/tree';
-import type { SettingsChange, TagExplorerSettings } from './settings';
+import type { SettingsChange, TagAlongSettings } from './settings';
 
 /**
  * What the pane and its menus need from the plugin: the settings, a way to change them, and the
@@ -9,7 +9,7 @@ import type { SettingsChange, TagExplorerSettings } from './settings';
  */
 export interface PluginHost {
 	readonly app: App;
-	readonly settings: TagExplorerSettings;
+	readonly settings: TagAlongSettings;
 	updateSettings(change: SettingsChange): Promise<void>;
 	tree(): TagTree;
 }

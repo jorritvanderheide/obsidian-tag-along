@@ -1,6 +1,6 @@
 import { type App, getAllTags, type TFile } from 'obsidian';
 import { isNoteVisible, type NoteEntry, normalizeTag, noteTitle, tagsWithParents, uniqueTags } from './core/tags';
-import type { TagExplorerSettings } from './settings';
+import type { TagAlongSettings } from './settings';
 
 /** Keeps the tags and display names of all Markdown notes up to date. */
 export class NoteIndex {
@@ -9,7 +9,7 @@ export class NoteIndex {
 
 	constructor(
 		private readonly app: App,
-		private readonly settings: () => TagExplorerSettings,
+		private readonly settings: () => TagAlongSettings,
 	) {}
 
 	/** Goes up whenever something shown in the tree may have changed. */

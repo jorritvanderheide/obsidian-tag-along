@@ -9,20 +9,20 @@ import {
 	DEFAULT_SETTINGS,
 	migrateSettings,
 	type SettingsChange,
-	type TagExplorerSettings,
+	type TagAlongSettings,
 } from './settings';
-import { TagExplorerSettingTab } from './ui/settings-tab';
+import { TagAlongSettingTab } from './ui/settings-tab';
 import { registerTagClicks } from './tag-clicks';
-import { TagExplorerView, VIEW_TYPE } from './ui/view';
+import { TagAlongView, VIEW_TYPE } from './ui/view';
 
-export default class TagExplorerPlugin extends Plugin implements PluginHost {
-	settings: TagExplorerSettings = DEFAULT_SETTINGS;
+export default class TagAlongPlugin extends Plugin implements PluginHost {
+	settings: TagAlongSettings = DEFAULT_SETTINGS;
 	readonly index = new NoteIndex(this.app, () => this.settings);
 	/** One tree for all open views, rebuilt only when the notes or settings changed. */
 	private readonly trees = new LastResult(
-		(_version: number, settings: TagExplorerSettings) => new TagTree(this.index.visibleNotes(), settings),
+		(_version: number, settings: TagAlongSettings) => new TagTree(this.index.visibleNotes(), settings),
 	);
-	private settingTab!: TagExplorerSettingTab;
+	private settingTab!: TagAlongSettingTab;
 
 	tree(): TagTree {
 		return this.trees.get(this.index.version, this.settings);
@@ -40,10 +40,10 @@ export default class TagExplorerPlugin extends Plugin implements PluginHost {
 		const data: unknown = await this.loadData();
 		this.settings = migrateSettings(data);
 
-		this.registerView(VIEW_TYPE, (leaf) => new TagExplorerView(leaf, this));
-		this.registerHoverLinkSource(VIEW_TYPE, { display: 'Tag Explorer', defaultMod: true });
-		this.addRibbonIcon('tags', 'Open Tag Explorer', () => void this.openView());
-		this.settingTab = new TagExplorerSettingTab(this.app, this);
+		this.registerView(VIEW_TYPE, (leaf) => new TagAlongView(leaf, this));
+		this.registerHoverLinkSource(VIEW_TYPE, { display: 'Tag Along', defaultMod: true });
+		this.addRibbonIcon('tags', 'Open Tag Along', () => void this.openView());
+		this.settingTab = new TagAlongSettingTab(this.app, this);
 		this.addSettingTab(this.settingTab);
 
 		this.addCommand({
@@ -84,12 +84,12 @@ export default class TagExplorerPlugin extends Plugin implements PluginHost {
 
 		this.registerEvent(
 			this.app.workspace.on('file-menu', (menu, file, _source, leaf) => {
-				if (!(file instanceof TFile) || leaf?.view instanceof TagExplorerView) return;
+				if (!(file instanceof TFile) || leaf?.view instanceof TagAlongView) return;
 				if (!this.tree().pathToNote(file.path)) return;
 				menu.addItem((item) =>
 					item
 						.setSection('view')
-						.setTitle('Reveal in Tag Explorer')
+						.setTitle('Reveal in Tag Along')
 						.setIcon('tags')
 						.onClick(() => void this.revealNote(file.path)),
 				);
@@ -183,32 +183,32 @@ export default class TagExplorerPlugin extends Plugin implements PluginHost {
 
 	async revealNote(path: string): Promise<void> {
 		const view = await this.openView();
-		if (!view?.revealNote(path)) new Notice('This note is not shown in Tag Explorer.');
+		if (!view?.revealNote(path)) new Notice('This note is not shown in Tag Along.');
 	}
 
 	async revealTag(tag: string): Promise<void> {
 		const view = await this.openView();
-		if (!view?.revealTag(tag)) new Notice(`#${tag.replace(/^#/, '')} is not shown in Tag Explorer.`);
+		if (!view?.revealTag(tag)) new Notice(`#${tag.replace(/^#/, '')} is not shown in Tag Along.`);
 	}
 
-	private async openView(): Promise<TagExplorerView | undefined> {
+	private async openView(): Promise<TagAlongView | undefined> {
 		const leaf = await this.app.workspace.ensureSideLeaf(VIEW_TYPE, 'left', { active: true, reveal: true });
 		await leaf.loadIfDeferred();
-		return leaf.view instanceof TagExplorerView ? leaf.view : undefined;
+		return leaf.view instanceof TagAlongView ? leaf.view : undefined;
 	}
 
 	/** Runs `action` on every open view; for commands that only make sense with a view open. */
-	private withViews(checking: boolean, action: (view: TagExplorerView) => void): boolean {
+	private withViews(checking: boolean, action: (view: TagAlongView) => void): boolean {
 		const views = this.views();
 		if (views.length === 0) return false;
 		if (!checking) views.forEach(action);
 		return true;
 	}
 
-	private views(): TagExplorerView[] {
+	private views(): TagAlongView[] {
 		return this.app.workspace
 			.getLeavesOfType(VIEW_TYPE)
 			.map((leaf) => leaf.view)
-			.filter((view): view is TagExplorerView => view instanceof TagExplorerView);
+			.filter((view): view is TagAlongView => view instanceof TagAlongView);
 	}
 }

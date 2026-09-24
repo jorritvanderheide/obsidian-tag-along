@@ -4,7 +4,7 @@ import { namespaceOf, normalizeTag } from './core/tags';
 /** Bump when stored settings change shape, and add a step to `upgrades`. */
 export const SETTINGS_VERSION = 4;
 
-export interface TagExplorerSettings {
+export interface TagAlongSettings {
 	version: typeof SETTINGS_VERSION;
 	noteSort: NoteSort;
 	folderSort: FolderSort;
@@ -30,7 +30,7 @@ export interface TagExplorerSettings {
 	excludedTags: string[];
 }
 
-export const DEFAULT_SETTINGS: TagExplorerSettings = {
+export const DEFAULT_SETTINGS: TagAlongSettings = {
 	version: SETTINGS_VERSION,
 	noteSort: 'name-asc',
 	folderSort: 'name-asc',
@@ -54,12 +54,12 @@ export const DEFAULT_SETTINGS: TagExplorerSettings = {
 type Raw = Record<string, unknown>;
 
 /** New values for some settings. Values are validated, so they may come straight from the UI. */
-export type SettingsPatch = Partial<Record<keyof TagExplorerSettings, unknown>>;
+export type SettingsPatch = Partial<Record<keyof TagAlongSettings, unknown>>;
 
 /** A patch, or a function that builds one from the settings at the moment the change is saved. */
-export type SettingsChange = SettingsPatch | ((current: TagExplorerSettings) => SettingsPatch);
+export type SettingsChange = SettingsPatch | ((current: TagAlongSettings) => SettingsPatch);
 
-export function applySettingsChange(current: TagExplorerSettings, change: SettingsChange): TagExplorerSettings {
+export function applySettingsChange(current: TagAlongSettings, change: SettingsChange): TagAlongSettings {
 	const patch = typeof change === 'function' ? change(current) : change;
 	return migrateSettings({ ...current, ...patch });
 }
@@ -75,7 +75,7 @@ const upgrades: Record<number, (raw: Raw) => Raw> = {
  * Turns whatever is stored in data.json into valid settings, upgrading older data step by step.
  * Data from a newer version is read as the current version: known settings are kept.
  */
-export function migrateSettings(data: unknown): TagExplorerSettings {
+export function migrateSettings(data: unknown): TagAlongSettings {
 	let source: Raw = isRecord(data) ? data : {};
 	let version = typeof source.version === 'number' ? source.version : 1;
 	for (; version < SETTINGS_VERSION; version++) {

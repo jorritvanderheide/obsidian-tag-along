@@ -1,4 +1,4 @@
-.workspace-leaf-content[data-type='tag-explorer-view'] .view-content {
+.workspace-leaf-content[data-type='tag-along-view'] .view-content {
 	display: flex;
 	flex-direction: column;
 	padding: 0;
@@ -10,15 +10,15 @@
  * so hover and active highlights span the full width while the content stays indented.
  * The indent per level matches `.tree-item-children` in Obsidian's own CSS.
  */
-.workspace-leaf-content[data-type='tag-explorer-view'] .tree-item-self {
-	--tag-explorer-indent: calc(
+.workspace-leaf-content[data-type='tag-along-view'] .tree-item-self {
+	--tag-along-indent: calc(
 		var(--nav-item-children-margin-start, var(--nav-item-children-margin-left, 0px)) +
 			var(--nav-item-children-padding-start, var(--nav-item-children-padding-left, 0px)) +
 			var(--nav-indentation-guide-width, 0px)
 	);
-	--tag-explorer-offset: calc(var(--tag-explorer-depth, 0) * var(--tag-explorer-indent));
-	margin-inline-start: calc(-1 * var(--tag-explorer-offset));
-	border-inline-start: var(--tag-explorer-offset) solid transparent;
+	--tag-along-offset: calc(var(--tag-along-depth, 0) * var(--tag-along-indent));
+	margin-inline-start: calc(-1 * var(--tag-along-offset));
+	border-inline-start: var(--tag-along-offset) solid transparent;
 }
 
 /*
@@ -26,22 +26,22 @@
  * takes up whatever space is left over. Once the tree is taller than the pane, the box scrolls
  * along at the end of it.
  */
-.workspace-leaf-content[data-type='tag-explorer-view'] .tag-explorer-tree {
+.workspace-leaf-content[data-type='tag-along-view'] .tag-along-tree {
 	display: flex;
 	flex-direction: column;
 	min-height: 100%;
 }
 
-.workspace-leaf-content[data-type='tag-explorer-view'] .tag-explorer-pinned {
+.workspace-leaf-content[data-type='tag-along-view'] .tag-along-pinned {
 	margin-top: auto;
 }
 
 /* Filter folders narrow the parent's notes down by another namespace. */
-.workspace-leaf-content[data-type='tag-explorer-view'] .tag-explorer-filter {
+.workspace-leaf-content[data-type='tag-along-view'] .tag-along-filter {
 	color: var(--text-faint);
 }
 
-.workspace-leaf-content[data-type='tag-explorer-view'] .tag-explorer-filter:hover {
+.workspace-leaf-content[data-type='tag-along-view'] .tag-along-filter:hover {
 	color: var(--nav-item-color-hover);
 }
 
@@ -49,26 +49,26 @@
  * While a folder is dragged, the folder it would land above or below gets a line, drawn inside it
  * so nothing moves. An open folder is lined around its contents, where the dragged folder lands.
  */
-.workspace-leaf-content[data-type='tag-explorer-view'] .tag-explorer-drop-before {
+.workspace-leaf-content[data-type='tag-along-view'] .tag-along-drop-before {
 	box-shadow: inset 0 2px 0 0 var(--interactive-accent);
 }
 
-.workspace-leaf-content[data-type='tag-explorer-view'] .tag-explorer-drop-after {
+.workspace-leaf-content[data-type='tag-along-view'] .tag-along-drop-after {
 	box-shadow: inset 0 -2px 0 0 var(--interactive-accent);
 }
 
 /* A folder's own icon replaces the collapse arrow and follows the row's color, like the arrow. */
-.workspace-leaf-content[data-type='tag-explorer-view'] .tag-explorer-folder-icon {
+.workspace-leaf-content[data-type='tag-along-view'] .tag-along-folder-icon {
 	color: currentColor;
 }
 
-.tag-explorer-icon-suggestion {
+.tag-along-icon-suggestion {
 	display: flex;
 	align-items: center;
 	gap: var(--size-4-2);
 }
 
-.tag-explorer-icon-suggestion-icon {
+.tag-along-icon-suggestion-icon {
 	display: flex;
 	color: var(--icon-color);
 }

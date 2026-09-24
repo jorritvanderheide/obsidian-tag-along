@@ -142,7 +142,7 @@ export class TreeRenderer {
 		for (const note of children.notes) this.renderNote(note, parentEl, depth);
 		// Pinned folders go below the untagged notes, in one box that styles.css puts at the bottom.
 		if (pinned.length > 0) {
-			const pinnedEl = parentEl.createDiv({ cls: 'tag-explorer-pinned' });
+			const pinnedEl = parentEl.createDiv({ cls: 'tag-along-pinned' });
 			for (const node of pinned) this.renderFolder(tree, node, pinnedEl, depth);
 		}
 		for (const node of children.filters) this.renderFolder(tree, node, parentEl, depth);
@@ -161,7 +161,7 @@ export class TreeRenderer {
 		// A custom icon takes the place of the collapse arrow. Without `collapse-icon` it is not rotated.
 		const icon = this.state.iconFor(node);
 		const iconEl = selfEl.createDiv({
-			cls: icon ? 'tree-item-icon tag-explorer-folder-icon' : 'tree-item-icon collapse-icon',
+			cls: icon ? 'tree-item-icon tag-along-folder-icon' : 'tree-item-icon collapse-icon',
 		});
 		iconEl.toggleClass('is-collapsed', !expanded);
 		setIcon(iconEl, icon || 'right-triangle');
@@ -175,7 +175,7 @@ export class TreeRenderer {
 			});
 		}
 		if (node.kind === 'filter') {
-			selfEl.addClass('tag-explorer-filter');
+			selfEl.addClass('tag-along-filter');
 			selfEl.setAttribute('aria-label', `Narrow down by ${label}`);
 		} else {
 			// Tag folders can be dragged to change their order among their siblings.
@@ -206,7 +206,7 @@ export class TreeRenderer {
 	/** Lets styles.css stretch the row highlight to the full width, like the core file explorer. */
 	private setDepth(rowEl: HTMLElement, depth: number): void {
 		this.rowDepths.set(rowEl, depth);
-		if (depth > 0) rowEl.setCssProps({ '--tag-explorer-depth': String(depth) });
+		if (depth > 0) rowEl.setCssProps({ '--tag-along-depth': String(depth) });
 	}
 
 	/** Drops lookups for rows that were inside a folder that just closed. */

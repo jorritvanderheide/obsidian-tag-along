@@ -24,9 +24,9 @@
 		notes.push({ path: `Notes/Note ${i}.md`, name: `Note ${i}`, mtime: i, ctime: i, tags });
 	}
 
-	const plugin = app.plugins.plugins['tag-explorer'];
-	const view = app.workspace.getLeavesOfType('tag-explorer-view')[0]?.view;
-	if (!plugin || !view) return 'Open Tag Explorer first.';
+	const plugin = app.plugins.plugins['tag-along'];
+	const view = app.workspace.getLeavesOfType('tag-along-view')[0]?.view;
+	if (!plugin || !view) return 'Open Tag Along first.';
 	const TagTree = plugin.tree().constructor;
 	const TreeRenderer = view.renderer.constructor;
 	const options = { ...plugin.settings, hiddenFolders: [], topLevelFolders: [], folderOrder: [] };

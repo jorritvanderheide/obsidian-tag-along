@@ -19,8 +19,8 @@ export class IconModal extends FuzzySuggestModal<string> {
 	}
 
 	renderSuggestion(match: FuzzyMatch<string>, el: HTMLElement): void {
-		el.addClass('tag-explorer-icon-suggestion');
-		setIcon(el.createDiv({ cls: 'tag-explorer-icon-suggestion-icon' }), match.item);
+		el.addClass('tag-along-icon-suggestion');
+		setIcon(el.createDiv({ cls: 'tag-along-icon-suggestion-icon' }), match.item);
 		super.renderSuggestion(match, el.createDiv());
 	}
 

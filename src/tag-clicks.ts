@@ -1,11 +1,11 @@
 import { Keymap } from 'obsidian';
-import type TagExplorerPlugin from './main';
+import type TagAlongPlugin from './main';
 
 /**
- * When "Open tags in Tag Explorer" is on, a click on a tag in a note opens its folder instead of
+ * When "Open tags in Tag Along" is on, a click on a tag in a note opens its folder instead of
  * searching for it. Ctrl/Cmd-click keeps Obsidian's search.
  */
-export function registerTagClicks(plugin: TagExplorerPlugin): void {
+export function registerTagClicks(plugin: TagAlongPlugin): void {
 	const onClick = (evt: MouseEvent) => {
 		if (!plugin.settings.openTagsInExplorer || evt.button !== 0 || Keymap.isModEvent(evt)) return;
 		const tag = tagAt(evt.target);

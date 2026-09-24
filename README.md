@@ -1,4 +1,4 @@
-# Tag Explorer
+# Tag Along
 
 [![Donate](https://liberapay.com/assets/widgets/donate.svg)](https://liberapay.com/BW20)
 
@@ -38,14 +38,14 @@ A note is listed in the deepest folder for each of its tags. A note tagged both 
 - **Copy tags.** Right-click a folder to copy the tags that lead to it, such as `#domain/phd #source/ai`.
 - **Note menu.** Right-click a note for the same menu as in the core file explorer: open in a new tab or to the right, make a copy, rename, delete, plus the items other plugins add.
 - **Selecting several notes.** Alt-click to select notes and Shift-click to select a range, like the core file explorer. Right-click the selection to delete or move the notes. Press Escape to clear it.
-- **Reveal notes and tags.** The **Reveal active note** command, and **Reveal in Tag Explorer** in other file menus, open the folders down to a note. With **Open tags in Tag Explorer** on, clicking a tag in a note opens its folder (Ctrl/Cmd-click still searches).
+- **Reveal notes and tags.** The **Reveal active note** command, and **Reveal in Tag Along** in other file menus, open the folders down to a note. With **Open tags in Tag Along** on, clicking a tag in a note opens its folder (Ctrl/Cmd-click still searches).
 - **Keyboard.** Use the arrow keys to move through the tree and open or close folders, Enter to open a note (Ctrl/Cmd+Enter in a new tab), F2 to rename and Delete to delete.
 - **Hover previews** with Ctrl/Cmd held, like the core file explorer.
 - Open folders are remembered per pane.
 
 ## Usage
 
-Open the tree with the ribbon icon or the **Tag Explorer: Open** command. The buttons at the top of the pane change the sort order, toggle compact folders and filter folders, and expand or collapse all folders.
+Open the tree with the ribbon icon or the **Tag Along: Open** command. The buttons at the top of the pane change the sort order, toggle compact folders and filter folders, and expand or collapse all folders.
 
 ## Settings
 
@@ -60,19 +60,23 @@ Open the tree with the ribbon icon or the **Tag Explorer: Open** command. The bu
 | Show untagged notes | List notes without tags at the top of the tree. |
 | Show note titles | Show the `title` property or first heading instead of the file name. |
 | Show note counts | Show how many notes each folder contains. |
-| Open tags in Tag Explorer | Clicking a tag in a note opens its folder instead of searching for it. |
+| Open tags in Tag Along | Clicking a tag in a note opens its folder instead of searching for it. |
 | Included folders | Only notes in these folders appear. Leave empty to use the whole vault. |
 | Excluded folders | Notes in these folders are left out, even inside an included folder. |
 | Excluded tags | Notes with these tags (or their sub-tags) are left out of the tree. |
 
+## Upgrading from Tag Explorer
+
+Tag Along was called Tag Explorer up to version 2.1.0. Its plugin id changed with the name, so Obsidian installs it as a new plugin next to the old one. To keep your settings, copy `data.json` from `.obsidian/plugins/tag-explorer/` in your vault to `.obsidian/plugins/tag-along/` while Obsidian is closed, then remove Tag Explorer. Hotkeys for its commands have to be set again.
+
 ## Upgrading from 1.x
 
-Settings carry over automatically. Some 1.x options were removed:
+Settings copied over from 1.x are converted automatically. Some 1.x options were removed:
 
 - **Excluded tags** replaces "Exclude notes with tag" and "Archive tags": notes with these tags are left out of the tree.
 - "Hide tags" is now **Hidden folders**. It hides a tag and its sub-tags; matching on the last part of a tag (`old` hiding `domain/old`) is gone.
 - "Scan only these folders" is now **Included folders**.
-- "Intercept tag clicks" is now **Open tags in Tag Explorer**.
+- "Intercept tag clicks" is now **Open tags in Tag Along**.
 - Sort orders carry over; sorting by full path became sorting by name.
 - Search, dragging notes onto folders, the file title format and the metadata scan delay were removed.
 - Pinned folders became two settings: **Folder order**, which you set by dragging folders in the tree, and **Top-level folders** for pinned sub-tags. Existing pins carry over to both.
@@ -88,10 +92,10 @@ npm run lint
 npm test
 ```
 
-Copy `main.js`, `manifest.json` and `styles.css` to `<vault>/.obsidian/plugins/tag-explorer/` to try it out.
+Copy `main.js`, `manifest.json` and `styles.css` to `<vault>/.obsidian/plugins/tag-along/` to try it out.
 
 ## License
 
 Copyright © 2026 Jorrit van der Heide. Licensed under the [EUPL-1.2](LICENSE).
 
-Tag Explorer started as a fork of [TagFolder](https://github.com/vrtmrz/obsidian-tagfolder) by vorotamoroz. Version 2 is a rewrite that shares no code with it; releases up to 1.1.1 remain available under the MIT license.
+Tag Along started as a fork of [TagFolder](https://github.com/vrtmrz/obsidian-tagfolder) by vorotamoroz. Version 2 is a rewrite that shares no code with it; releases up to 1.1.1 remain available under the MIT license.
