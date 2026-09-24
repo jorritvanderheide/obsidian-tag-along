@@ -16,7 +16,8 @@
       in
       {
         packages.default = pkgs.buildNpmPackage {
-          pname = "obsidian-tag-along";
+          # Both from package.json, so a rename or a release cannot leave them behind.
+          pname = package.name;
           inherit (package) version;
           src = ./.;
           # Update with: nix run nixpkgs#prefetch-npm-deps -- package-lock.json

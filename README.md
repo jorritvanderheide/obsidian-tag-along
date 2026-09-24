@@ -2,7 +2,7 @@
 
 [![Donate](https://liberapay.com/assets/widgets/donate.svg)](https://liberapay.com/BW20)
 
-Browse your vault as a folder tree built from your tags.
+**Browse your vault as a folder tree built from your tags.**
 
 Each tag namespace (`domain/`, `source/`, `status/`, …) becomes its own tree. A note appears under every tag it has, so a note tagged `#domain/coding` and `#source/book` shows up in both places.
 
@@ -47,23 +47,52 @@ A note is listed in the deepest folder for each of its tags. A note tagged both 
 
 Open the tree with the ribbon icon or the **Tag Along: Open** command. The buttons at the top of the pane change the sort order, toggle compact folders and filter folders, and expand or collapse all folders.
 
+## Requirements
+
+**Obsidian 1.13** or later, on desktop or mobile.
+
+## Installation
+
+Download `main.js`, `manifest.json` and `styles.css` from the [latest release](https://github.com/jorritvanderheide/obsidian-tag-along/releases/latest) into `.obsidian/plugins/tag-along/` in your vault, then enable **Tag Along** under Settings → Community plugins.
+
+On first load it adds its pane to the left sidebar.
+
+## Commands
+
+None has a hotkey, so pick your own.
+
+| Command | What it does |
+|---|---|
+| **Open** | Show the tree in the left sidebar. |
+| **Reveal active note** | Open the folders down to the note you have open, and flash it. |
+| **Expand all folders** | Open every folder in the tree. |
+| **Collapse all folders** | Close every folder in the tree. |
+| **Toggle compact folders** | Turn compact folders on or off, like the button at the top of the pane. |
+| **Toggle filter folders** | Turn filter folders on or off, like the button at the top of the pane. |
+
 ## Settings
 
-| Setting | What it does |
-|---|---|
-| Compact folders | Show a folder and its only sub-folder as one entry. |
-| Filter folders | Show your other namespaces as grayed-out folders to narrow a folder's notes down. |
-| Flat folders | These folders list every note below them, from their sub-tags too, instead of showing sub-folders. |
-| Hidden folders | These tags and their sub-tags get no folder, but their notes still appear under their other tags. Folders moved to the top level stay visible even when the tag they came from is hidden. |
-| Folder order | The folders you dragged into place, and the ones pinned to the bottom of the pane. Remove one to let it follow the sort order again. |
-| Top-level folders | These sub-tags get a top-level folder of their own, merged with a folder of the same name. |
-| Show untagged notes | List notes without tags at the top of the tree. |
-| Show note titles | Show the `title` property or first heading instead of the file name. |
-| Show note counts | Show how many notes each folder contains. |
-| Open tags in Tag Along | Clicking a tag in a note opens its folder instead of searching for it. |
-| Included folders | Only notes in these folders appear. Leave empty to use the whole vault. |
-| Excluded folders | Notes in these folders are left out, even inside an included folder. |
-| Excluded tags | Notes with these tags (or their sub-tags) are left out of the tree. |
+| Setting | Default | What it does |
+|---|---|---|
+| Compact folders | On | Show a folder and its only sub-folder as one entry. |
+| Filter folders | On | Show your other namespaces as grayed-out folders to narrow a folder's notes down. |
+| Flat folders | None | These folders list every note below them, from their sub-tags too, instead of showing sub-folders. |
+| Hidden folders | None | These tags and their sub-tags get no folder, but their notes still appear under their other tags. Folders moved to the top level stay visible even when the tag they came from is hidden. |
+| Folder order | None | The folders you dragged into place, and the ones pinned to the bottom of the pane. Remove one to let it follow the sort order again. |
+| Top-level folders | None | These sub-tags get a top-level folder of their own, merged with a folder of the same name. |
+| Show untagged notes | Off | List notes without tags at the top of the tree. |
+| Show note titles | On | Show the `title` property or first heading instead of the file name. |
+| Show note counts | Off | Show how many notes each folder contains. |
+| Open tags in Tag Along | Off | Clicking a tag in a note opens its folder instead of searching for it. |
+| Included folders | Whole vault | Only notes in these folders appear. Leave empty to use the whole vault. |
+| Excluded folders | None | Notes in these folders are left out, even inside an included folder. |
+| Excluded tags | None | Notes with these tags (or their sub-tags) are left out of the tree. |
+
+## Safety
+
+Tag Along never changes what is in a note. Files change only when you ask for it from its menus or keys: renaming, making a copy, deleting or moving notes. Those go through Obsidian the same way they do in the core file explorer.
+
+Everything else changes only Tag Along's own settings. Its folders are tags, not folders on disk, so hiding, flattening, pinning or moving one leaves your notes alone.
 
 ## Upgrading from Tag Explorer
 
@@ -85,6 +114,7 @@ Settings copied over from 1.x are converted automatically. Some 1.x options were
 ## Development
 
 ```sh
+nix develop     # or any Node.js 20+
 npm install
 npm run dev     # rebuild on change
 npm run build   # typecheck and production build
