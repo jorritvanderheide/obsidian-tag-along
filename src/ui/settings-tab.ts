@@ -47,7 +47,7 @@ export class TagExplorerSettingTab extends PluginSettingTab {
 					{
 						type: 'page',
 						name: 'Folder order',
-						desc: 'Folders you dragged into place in the tree, and folders pinned to the bottom of the pane. Every other folder follows the sort order, in between the two. Remove a folder here to let it follow the sort order again.',
+						desc: 'Folders you dragged into place in the tree, and folders pinned to the bottom of the pane. Every other folder follows the sort order, in between the two. Remove a folder here, or right-click it and choose "Follow sort order", to let it follow the sort order again.',
 						displayValue: () =>
 							countLabel(settings().folderOrder.length + settings().folderOrderEnd.length, 'folder', 'folders'),
 						items: [
@@ -87,7 +87,7 @@ export class TagExplorerSettingTab extends PluginSettingTab {
 					{
 						type: 'page',
 						name: 'Flat folders',
-						desc: 'These folders list every note below them, from their sub-tags too, instead of showing sub-folders. You can also right-click a folder and choose "Hide sub-folders".',
+						desc: 'These folders list every note below them, from their sub-tags too, instead of showing sub-folders. You can also right-click a folder and choose "Flatten folder".',
 						displayValue: () => countLabel(settings().flatFolders.length, 'folder', 'folders'),
 						items: [
 							this.tagList(
@@ -102,7 +102,7 @@ export class TagExplorerSettingTab extends PluginSettingTab {
 					{
 						type: 'page',
 						name: 'Hidden folders',
-						desc: 'These tags and their sub-tags get no folder, and are not offered as filter folders. Their notes still appear under their other tags; notes without any other tags count as untagged. Folders moved to the top level stay visible, even when the tag they came from is hidden.',
+						desc: 'These tags and their sub-tags get no folder, and are not offered as filter folders. Their notes still appear under their other tags; notes without any other tags count as untagged. Folders moved to the top level stay visible, even when the tag they came from is hidden. You can also right-click a folder and choose "Hide folder".',
 						displayValue: () => countLabel(settings().hiddenFolders.length, 'folder', 'folders'),
 						items: [
 							this.tagList(

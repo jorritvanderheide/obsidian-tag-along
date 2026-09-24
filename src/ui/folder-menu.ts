@@ -11,14 +11,16 @@ export function folderIcon(icons: Record<string, string>, tree: TagTree, node: F
 		.find((icon) => icon !== undefined);
 }
 
-/** Shows the right-click menu of a tag folder: where it sits in the tree, and its icon. */
+/** Shows the right-click menu of a tag folder: where it sits in the tree, its icon, and hiding it. */
 export function showFolderMenu(evt: MouseEvent, plugin: PluginHost, tree: TagTree, node: FolderNode): void {
 	const menu = new Menu();
 	addCopyItem(menu, tree, node);
 	addFlatItem(menu, plugin, tree, node);
 	addTopLevelItem(menu, plugin, tree, node);
 	addPinItem(menu, plugin, tree, node);
+	addSortOrderItem(menu, plugin, tree, node);
 	addIconItems(menu, plugin, tree, node);
+	addHideItem(menu, plugin, tree, node);
 	menu.showAtMouseEvent(evt);
 }
 
@@ -46,7 +48,7 @@ function addFlatItem(menu: Menu, plugin: PluginHost, tree: TagTree, node: Folder
 	if (target === undefined || (!node.isFlat && tree.children(node).folders.length === 0)) return;
 	menu.addItem((item) =>
 		item
-			.setTitle(node.isFlat ? 'Show sub-folders' : 'Hide sub-folders')
+			.setTitle(node.isFlat ? 'Show sub-folders' : 'Flatten folder')
 			.setIcon(node.isFlat ? 'folder-tree' : 'list')
 			.onClick(() => {
 				void plugin.updateSettings((s) => ({
@@ -103,6 +105,24 @@ function addPinItem(menu: Menu, plugin: PluginHost, tree: TagTree, node: FolderN
 	);
 }
 
+/** Lets a folder that was dragged into place follow the sort order again. */
+function addSortOrderItem(menu: Menu, plugin: PluginHost, tree: TagTree, node: FolderNode): void {
+	// Several entries can end up at the same folder, e.g. once a moved tag merges with a plain one.
+	const shown = node.chain[0];
+	const placed = plugin.settings.folderOrder.filter((tag) => tree.tags.shownTag(tag) === shown);
+	if (placed.length === 0) return;
+	menu.addItem((item) =>
+		item
+			.setTitle('Follow sort order')
+			.setIcon('arrow-up-down')
+			.onClick(() => {
+				void plugin.updateSettings((s) => ({
+					folderOrder: s.folderOrder.filter((tag) => !placed.includes(tag)),
+				}));
+			}),
+	);
+}
+
 function addIconItems(menu: Menu, plugin: PluginHost, tree: TagTree, node: FolderNode): void {
 	const sources = tree.sourceTags(node);
 	const current = sources.find((tag) => plugin.settings.folderIcons[tag] !== undefined);
@@ -129,6 +149,20 @@ function addIconItems(menu: Menu, plugin: PluginHost, tree: TagTree, node: Folde
 					delete rest[current];
 					return { folderIcons: rest };
 				});
+			}),
+	);
+}
+
+/** Hides a folder with its sub-folders. A hidden folder cannot be right-clicked, so say where it comes back. */
+function addHideItem(menu: Menu, plugin: PluginHost, tree: TagTree, node: FolderNode): void {
+	const tag = tree.levelTag(node);
+	menu.addItem((item) =>
+		item
+			.setTitle('Hide folder')
+			.setIcon('eye-off')
+			.onClick(() => {
+				void plugin.updateSettings((s) => ({ hiddenFolders: [...s.hiddenFolders, tag] }));
+				new Notice(`Hid #${tag}. Show it again under Hidden folders in the settings.`);
 			}),
 	);
 }
