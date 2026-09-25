@@ -1,11 +1,11 @@
 import { type App, Menu, type TFile, type WorkspaceLeaf } from 'obsidian';
-import { RenameModal } from './rename-modal';
 
 /**
  * Shows the right-click menu of a note with the same items as the core file explorer. Other
- * plugins and core plugins add their items through the `file-menu` event.
+ * plugins and core plugins add their items through the `file-menu` event. `rename` edits the note's
+ * name in the tree.
  */
-export function showNoteMenu(evt: MouseEvent, app: App, file: TFile, leaf: WorkspaceLeaf): void {
+export function showNoteMenu(evt: MouseEvent, app: App, file: TFile, leaf: WorkspaceLeaf, rename: () => void): void {
 	const menu = new Menu();
 	menu.addItem((item) =>
 		item
@@ -33,7 +33,7 @@ export function showNoteMenu(evt: MouseEvent, app: App, file: TFile, leaf: Works
 			.setSection('danger')
 			.setTitle('Rename...')
 			.setIcon('lucide-edit-3')
-			.onClick(() => new RenameModal(app, file).open()),
+			.onClick(rename),
 	);
 	menu.addItem((item) =>
 		item

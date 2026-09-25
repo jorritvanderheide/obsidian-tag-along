@@ -16,6 +16,7 @@ import { showNoteMenu, showNotesMenu } from './note-menu';
 import { showSortMenu } from './sort-menu';
 import { TreeDrag } from './tree-drag';
 import { TreeInput } from './tree-input';
+import { TreeRename } from './tree-rename';
 import { type FolderRow, TreeRenderer } from './tree-renderer';
 
 export const VIEW_TYPE = 'tag-along-view';
@@ -28,10 +29,16 @@ export class TagAlongView extends ItemView implements HoverParent {
 	private tree: TagTree | null = null;
 	private expanded = new Set<string>();
 	private activePath: string | null = null;
+	/** Set when a redraw was held back while a note was being renamed. */
+	private renderPending = false;
+	private readonly rename = new TreeRename(this.app, () => {
+		if (this.renderPending) this.render();
+	});
 	private readonly input = new TreeInput({
 		app: this.app,
 		renderer: () => this.renderer,
 		toggleFolder: (row) => this.toggleFolder(row),
+		rename: (rowEl, file) => this.rename.start(rowEl, file),
 	});
 	private readonly drag = new TreeDrag({
 		renderer: () => this.renderer,
@@ -91,6 +98,12 @@ export class TagAlongView extends ItemView implements HoverParent {
 		});
 		this.registerDomEvent(this.scrollEl, 'contextmenu', (evt) => this.onContextMenu(evt));
 		this.registerEvent(this.app.workspace.on('file-open', (file) => this.setActiveFile(file)));
+		// Renaming the open note does not open it again; the redraw that follows picks up the new path.
+		this.registerEvent(
+			this.app.vault.on('rename', (file, oldPath) => {
+				if (oldPath === this.activePath) this.activePath = file.path;
+			}),
+		);
 		this.scope = new Scope(this.app.scope);
 		this.input.registerKeys(this.scope);
 
@@ -231,6 +244,11 @@ export class TagAlongView extends ItemView implements HoverParent {
 
 	private render(): void {
 		if (!this.tree) return;
+		if (this.rename.isActive()) {
+			this.renderPending = true;
+			return;
+		}
+		this.renderPending = false;
 		const scrollTop = this.scrollEl.scrollTop;
 		this.renderer.render(this.tree);
 		this.input.afterRender();
@@ -240,6 +258,8 @@ export class TagAlongView extends ItemView implements HoverParent {
 
 	private onClick(evt: MouseEvent): void {
 		const target = evt.target as HTMLElement;
+		// Clicks in a name being edited place the cursor.
+		if (this.rename.contains(target)) return;
 		const row = this.renderer.folderRowAt(target);
 		if (row) {
 			this.input.onFolderClick(row);
@@ -255,16 +275,22 @@ export class TagAlongView extends ItemView implements HoverParent {
 
 	private onContextMenu(evt: MouseEvent): void {
 		const target = evt.target as HTMLElement;
-		const path = this.renderer.noteRowAt(target)?.dataset.path;
+		// A name being edited keeps the menu for cutting and pasting.
+		if (this.rename.contains(target)) return;
+		const noteEl = this.renderer.noteRowAt(target);
+		const path = noteEl?.dataset.path;
 		const file = path ? this.app.vault.getFileByPath(path) : null;
-		if (file) {
+		if (noteEl && file) {
 			evt.preventDefault();
 			const selection = this.input.selectionFor(file.path);
 			if (selection) {
 				showNotesMenu(evt, this.app, selection, this.leaf);
 			} else {
 				this.input.clearSelection();
-				showNoteMenu(evt, this.app, file, this.leaf);
+				// Wait for the menu to close, so it does not take the focus away from the name.
+				showNoteMenu(evt, this.app, file, this.leaf, () =>
+					window.requestAnimationFrame(() => this.rename.start(noteEl, file)),
+				);
 			}
 			return;
 		}

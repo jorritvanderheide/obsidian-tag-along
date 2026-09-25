@@ -1,13 +1,13 @@
 import { type App, Keymap, type Scope, type TFile } from 'obsidian';
 import { type FocusKey, moveFocus } from '../core/keyboard';
 import { rangeBetween } from '../core/select';
-import { RenameModal } from './rename-modal';
 import type { FolderRow, TreeRenderer } from './tree-renderer';
 
 export interface TreeInputHost {
 	readonly app: App;
 	renderer(): TreeRenderer;
 	toggleFolder(row: FolderRow): void;
+	rename(rowEl: HTMLElement, file: TFile): void;
 }
 
 /** Clicks, selection and keyboard focus in the tree, handled like the core file explorer. */
@@ -99,8 +99,9 @@ export class TreeInput {
 		scope.register([], 'Enter', open);
 		scope.register(['Mod'], 'Enter', open);
 		scope.register([], 'F2', () => {
+			const rowEl = this.focusedRow();
 			const file = this.focusedFile();
-			if (file) new RenameModal(this.host.app, file).open();
+			if (rowEl && file) this.host.rename(rowEl, file);
 			return false;
 		});
 		const remove = () => {

@@ -1,5 +1,12 @@
 import { describe, expect, it } from 'vitest';
-import { isNoteVisible, type NoteEntry, noteTitle, tagsWithParents } from '../src/core/tags';
+import {
+	fileNameFor,
+	isNoteVisible,
+	type NoteEntry,
+	noteTitle,
+	renameHeading,
+	tagsWithParents,
+} from '../src/core/tags';
 
 describe('tagsWithParents', () => {
 	it('adds every parent level, without duplicates, sorted', () => {
@@ -48,5 +55,36 @@ describe('noteTitle', () => {
 		expect(noteTitle('file', { title: '' }, [{ heading: 'Sub', level: 2 }, { heading: 'Heading', level: 1 }])).toBe('Heading');
 		expect(noteTitle('file', { title: 3 }, [])).toBe('file');
 		expect(noteTitle('file', undefined, undefined)).toBe('file');
+	});
+});
+
+describe('fileNameFor', () => {
+	it('drops characters that file names and links cannot have', () => {
+		expect(fileNameFor('Why is it like that?')).toBe('Why is it like that');
+		expect(fileNameFor('a/b: c*d "e" <f> | #g ^h [i]')).toBe('ab cd e f g h i');
+	});
+
+	it('tidies up spaces and leading dots', () => {
+		expect(fileNameFor('  .hidden   note \n')).toBe('hidden note');
+	});
+
+	it('returns an empty name when nothing is left', () => {
+		expect(fileNameFor('???')).toBe('');
+	});
+});
+
+describe('renameHeading', () => {
+	const content = '---\ntitle: x\n---\n# Old name\nOld name again\n';
+	const start = content.indexOf('# Old');
+	const end = content.indexOf('\n', start);
+
+	it('rewrites only the heading', () => {
+		expect(renameHeading(content, start, end, 'Old name', 'New $& name')).toBe(
+			'---\ntitle: x\n---\n# New $& name\nOld name again\n',
+		);
+	});
+
+	it('leaves the content alone when the heading changed in the meantime', () => {
+		expect(renameHeading(content, start, end, 'Other', 'New')).toBe(content);
 	});
 });

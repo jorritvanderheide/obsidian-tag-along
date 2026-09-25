@@ -74,3 +74,21 @@ export function noteTitle(
 	if (typeof title === 'string' && title.trim() !== '') return title.trim();
 	return headings?.find((h) => h.level === 1)?.heading || basename;
 }
+
+/** Characters that a file name cannot have on some system, or that break links to the note. */
+const UNSAFE_IN_FILE_NAME = /[*"\\/<>:|?#^[\]]/g;
+
+/** The file name for a note titled `title`, without the characters file names and links cannot have. */
+export function fileNameFor(title: string): string {
+	return title.replace(UNSAFE_IN_FILE_NAME, '').replace(/\s+/g, ' ').trim().replace(/^\.+/, '').trim();
+}
+
+/**
+ * Writes `newText` in the heading found between `start` and `end` of `content`. Leaves the content
+ * alone when the heading there no longer says `oldText`, as the note changed in the meantime.
+ */
+export function renameHeading(content: string, start: number, end: number, oldText: string, newText: string): string {
+	const heading = content.slice(start, end);
+	if (!heading.includes(oldText)) return content;
+	return content.slice(0, start) + heading.replace(oldText, () => newText) + content.slice(end);
+}
