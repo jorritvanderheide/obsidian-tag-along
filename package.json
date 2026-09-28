@@ -1,6 +1,6 @@
 {
 	"name": "obsidian-tag-along",
-	"version": "2.2.0",
+	"version": "2.3.0",
 	"description": "Navigate your vault through a tag-generated folder tree.",
 	"main": "main.js",
 	"type": "module",
