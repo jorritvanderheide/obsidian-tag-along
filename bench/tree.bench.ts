@@ -9,6 +9,7 @@ const options: TreeOptions = {
 	showUntagged: false,
 	hiddenFolders: ['topic/value-1'],
 	topLevelFolders: ['project/value-2'],
+	exclusiveFolders: [],
 	flatFolders: [],
 	folderOrder: ['status'],
 	folderOrderEnd: [],

@@ -10,7 +10,14 @@ import type TagAlongPlugin from '../main';
 import { ChoiceModal } from './choice-modal';
 
 type FolderListKey = 'includedFolders' | 'excludedFolders';
-type TagListKey = 'hiddenFolders' | 'topLevelFolders' | 'flatFolders' | 'folderOrder' | 'folderOrderEnd' | 'excludedTags';
+type TagListKey =
+	| 'hiddenFolders'
+	| 'topLevelFolders'
+	| 'exclusiveFolders'
+	| 'flatFolders'
+	| 'folderOrder'
+	| 'folderOrderEnd'
+	| 'excludedTags';
 type ListKey = TagListKey | FolderListKey;
 
 export class TagAlongSettingTab extends PluginSettingTab {
@@ -96,6 +103,21 @@ export class TagAlongSettingTab extends PluginSettingTab {
 								'Flatten a folder',
 								'Choose a folder to flatten...',
 								'No flat folders.',
+							),
+						],
+					},
+					{
+						type: 'page',
+						name: 'Exclusive folders',
+						desc: 'Notes with these tags appear only in these folders, not under their other tags, and their other tags are not offered as filter folders. Sub-tags count too: "inbox" also keeps notes tagged "inbox/later" to itself. You can also right-click a folder and choose "Keep notes only here".',
+						displayValue: () => countLabel(settings().exclusiveFolders.length, 'folder', 'folders'),
+						items: [
+							this.tagList(
+								'exclusiveFolders',
+								allTags,
+								'Add a folder',
+								'Choose a tag to keep its notes to itself...',
+								'No exclusive folders.',
 							),
 						],
 					},

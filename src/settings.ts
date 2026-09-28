@@ -17,6 +17,8 @@ export interface TagAlongSettings {
 	hiddenFolders: string[];
 	/** Sub-tags that get a top-level folder of their own, as written in notes. */
 	topLevelFolders: string[];
+	/** Folders whose notes appear nowhere else in the tree, as written in notes. */
+	exclusiveFolders: string[];
 	/** Folders that list every note below them instead of showing sub-folders, as written in notes. */
 	flatFolders: string[];
 	/** Folders put in order by hand, shown before the ones left to the sort order, as written in notes. */
@@ -42,6 +44,7 @@ export const DEFAULT_SETTINGS: TagAlongSettings = {
 	openTagsInExplorer: false,
 	hiddenFolders: [],
 	topLevelFolders: [],
+	exclusiveFolders: [],
 	flatFolders: [],
 	folderOrder: [],
 	folderOrderEnd: [],
@@ -95,6 +98,7 @@ export function migrateSettings(data: unknown): TagAlongSettings {
 		openTagsInExplorer: bool(source.openTagsInExplorer, d.openTagsInExplorer),
 		hiddenFolders: tags(source.hiddenFolders),
 		topLevelFolders: subTags(source.topLevelFolders),
+		exclusiveFolders: tags(source.exclusiveFolders),
 		flatFolders: tags(source.flatFolders),
 		folderOrder,
 		// A folder is kept first or kept last, never both.
@@ -115,8 +119,9 @@ function fromVersion1(raw: Raw): Raw {
 		openTagsInExplorer: raw.overrideTagClicking,
 		noteSort: typeof raw.sortType === 'string' ? V1_NOTE_SORTS[raw.sortType] : undefined,
 		folderSort: typeof raw.sortTypeTag === 'string' ? V1_FOLDER_SORTS[raw.sortTypeTag] : undefined,
-		// Notes with archive tags or excluded tags were already kept out of the normal folders.
-		excludedTags: [...commaList(raw.ignoreDocTags), ...commaList(raw.archiveTags)],
+		// Notes with archive tags were kept out of every folder but their archive tag.
+		exclusiveFolders: commaList(raw.archiveTags),
+		excludedTags: commaList(raw.ignoreDocTags),
 		pinnedFolders: raw.pinnedFolders,
 		folderIcons: raw.tagIcons,
 		// "Hide tags" only hid folders, not notes.

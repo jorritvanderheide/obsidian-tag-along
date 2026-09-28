@@ -32,6 +32,7 @@ A note is listed in the deepest folder for each of its tags. A note tagged both 
 - **Your own order.** Drag a folder up or down to put it where you want it, at any level. The folders you place stay where you put them; the ones you leave alone follow the sort order, in between. Right-click a folder you placed and choose **Follow sort order** to undo it.
 - **Pinned folders.** Drop a folder below all the others, or right-click it and choose **Pin to bottom**, to keep it at the bottom of the pane, below the folders that follow the sort order.
 - **Flat folders.** Right-click a folder with sub-folders and choose **Flatten folder** to list every note below it in one flat folder, from its sub-tags too.
+- **Exclusive folders.** Right-click a folder and choose **Keep notes only here** to list its notes there alone, not under their other tags. Handy for an `inbox` or `archive` tag: remove the tag from a note and it shows up under its other tags again.
 - **Hidden folders.** Right-click a folder and choose **Hide folder** to hide it with its sub-folders. Its notes still appear under their other tags. Show it again from the **Hidden folders** setting.
 - **Top-level folders.** Right-click a sub-folder and choose **Move to top level** to move a sub-tag out of its parent into a top-level folder of its own, merged with a folder of the same name.
 - **Folder icons.** Right-click a folder and choose **Set icon...** to show one of Obsidian's icons in place of its collapse arrow.
@@ -77,6 +78,7 @@ None has a hotkey, so pick your own.
 | Compact folders | On | Show a folder and its only sub-folder as one entry. |
 | Filter folders | On | Show your other namespaces as grayed-out folders to narrow a folder's notes down. |
 | Flat folders | None | These folders list every note below them, from their sub-tags too, instead of showing sub-folders. |
+| Exclusive folders | None | Notes with these tags (or their sub-tags) appear only in these folders, not under their other tags. |
 | Hidden folders | None | These tags and their sub-tags get no folder, but their notes still appear under their other tags. Folders moved to the top level stay visible even when the tag they came from is hidden. |
 | Folder order | None | The folders you dragged into place, and the ones pinned to the bottom of the pane. Remove one to let it follow the sort order again. |
 | Top-level folders | None | These sub-tags get a top-level folder of their own, merged with a folder of the same name. |
@@ -92,7 +94,7 @@ None has a hotkey, so pick your own.
 
 Tag Along never changes what is in a note. Files change only when you ask for it from its menus or keys: renaming, making a copy, deleting or moving notes. Those go through Obsidian the same way they do in the core file explorer.
 
-Everything else changes only Tag Along's own settings. Its folders are tags, not folders on disk, so hiding, flattening, pinning or moving one leaves your notes alone.
+Everything else changes only Tag Along's own settings. Its folders are tags, not folders on disk, so hiding, flattening, pinning, moving or keeping notes in one leaves your notes alone.
 
 ## Upgrading from Tag Explorer
 
@@ -102,7 +104,8 @@ Tag Along was called Tag Explorer up to version 2.1.0. Its plugin id changed wit
 
 Settings copied over from 1.x are converted automatically. Some 1.x options were removed:
 
-- **Excluded tags** replaces "Exclude notes with tag" and "Archive tags": notes with these tags are left out of the tree.
+- **Excluded tags** replaces "Exclude notes with tag": notes with these tags are left out of the tree.
+- "Archive tags" is now **Exclusive folders**, and also covers sub-tags.
 - "Hide tags" is now **Hidden folders**. It hides a tag and its sub-tags; matching on the last part of a tag (`old` hiding `domain/old`) is gone.
 - "Scan only these folders" is now **Included folders**.
 - "Intercept tag clicks" is now **Open tags in Tag Along**.

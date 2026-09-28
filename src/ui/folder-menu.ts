@@ -20,6 +20,7 @@ export function showFolderMenu(evt: MouseEvent, plugin: PluginHost, tree: TagTre
 	addPinItem(menu, plugin, tree, node);
 	addSortOrderItem(menu, plugin, tree, node);
 	addIconItems(menu, plugin, tree, node);
+	addExclusiveItem(menu, plugin, tree, node);
 	addHideItem(menu, plugin, tree, node);
 	menu.showAtMouseEvent(evt);
 }
@@ -149,6 +150,29 @@ function addIconItems(menu: Menu, plugin: PluginHost, tree: TagTree, node: Folde
 					delete rest[current];
 					return { folderIcons: rest };
 				});
+			}),
+	);
+}
+
+/** Lets a folder keep its notes out of every other folder, and let them go again. */
+function addExclusiveItem(menu: Menu, plugin: PluginHost, tree: TagTree, node: FolderNode): void {
+	// A compacted folder can be exclusive through any tag in its chain.
+	const current = plugin.settings.exclusiveFolders.filter((tag) => {
+		const shown = tree.tags.shownTag(tag);
+		return shown !== undefined && node.chain.includes(shown);
+	});
+	const tag = tree.levelTag(node);
+	menu.addItem((item) =>
+		item
+			.setTitle(current.length > 0 ? 'Show notes in all their folders' : 'Keep notes only here')
+			.setIcon(current.length > 0 ? 'folder-open' : 'folder-lock')
+			.onClick(() => {
+				void plugin.updateSettings((s) => ({
+					exclusiveFolders:
+						current.length > 0
+							? s.exclusiveFolders.filter((exclusive) => !current.includes(exclusive))
+							: [...s.exclusiveFolders, tag],
+				}));
 			}),
 	);
 }

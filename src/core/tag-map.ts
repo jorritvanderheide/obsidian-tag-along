@@ -8,12 +8,14 @@ export interface TagMapOptions {
 	 * had been written without their parent.
 	 */
 	topLevelFolders: string[];
+	/** Tags that, with their sub-tags, keep their notes to themselves: those notes get no other folder. */
+	exclusiveFolders: string[];
 }
 
 /**
  * Decides which tags each note has in the tree: tags below a sub-tag moved to the top level are
- * rewritten as if they had no parent, and hidden folders are dropped. Also maps tree folders back
- * to the tags they came from.
+ * rewritten as if they had no parent, hidden folders are dropped, and a note in an exclusive folder
+ * keeps only the tags of that folder. Also maps tree folders back to the tags they came from.
  */
 export class TagMap {
 	private readonly tags = new Map<NoteEntry, { shown: string[]; lower: string[] }>();
@@ -23,6 +25,8 @@ export class TagMap {
 	private readonly plainNamespaces = new Set<string>();
 	/** Moved sub-tags by the top-level name they get, deepest first. */
 	private readonly movedByName = new Map<string, string[]>();
+	/** Exclusive folders, as their tags are shown in the tree. */
+	private readonly exclusive: string[];
 
 	constructor(
 		notes: NoteEntry[],
@@ -30,6 +34,7 @@ export class TagMap {
 	) {
 		this.moved = [...options.topLevelFolders].sort((a, b) => b.split('/').length - a.split('/').length);
 		for (const tag of this.moved) push(this.movedByName, lastSegment(tag), tag);
+		this.exclusive = this.shownTags(options.exclusiveFolders);
 		for (const note of notes) this.tags.set(note, this.map(note.tags));
 	}
 
@@ -82,12 +87,20 @@ export class TagMap {
 	private map(noteTags: string[]): { shown: string[]; lower: string[] } {
 		const shown: string[] = [];
 		const lower: string[] = [];
+		// A note in an exclusive folder shows up there alone, so its other tags are dropped.
+		const exclusiveOnly =
+			this.exclusive.length > 0 &&
+			noteTags.some((tag) => {
+				const shownTag = this.shownTag(tag);
+				return shownTag !== undefined && this.isExclusive(shownTag);
+			});
 		for (const tag of noteTags) {
 			const original = tag.toLowerCase();
 			const moved = this.movedTagOf(original);
 			const effective = moved ? withoutParent(tag, moved) : tag;
 			const effectiveLower = moved ? withoutParent(original, moved) : original;
 			if (this.isHidden(original, effectiveLower, moved)) continue;
+			if (exclusiveOnly && !this.isExclusive(effectiveLower)) continue;
 			if (!moved) this.plainNamespaces.add(namespaceOf(original));
 			// Two tags can end up the same, e.g. `foo/bar` moved next to a plain `bar`; keep the first.
 			if (lower.includes(effectiveLower)) continue;
@@ -106,6 +119,11 @@ export class TagMap {
 			(hidden) =>
 				isTagOrChild(effective, hidden) || (isTagOrChild(original, hidden) && !moved?.startsWith(hidden + '/')),
 		);
+	}
+
+	/** Whether a tag as shown in the tree is in an exclusive folder. */
+	private isExclusive(shownTag: string): boolean {
+		return this.exclusive.some((tag) => isTagOrChild(shownTag, tag));
 	}
 
 	private movedTagOf(lowerTag: string): string | undefined {

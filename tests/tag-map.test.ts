@@ -7,7 +7,7 @@ function note(name: string, ...tags: string[]): NoteEntry {
 }
 
 function map(notes: NoteEntry[], options: Partial<TagMapOptions> = {}): TagMap {
-	return new TagMap(notes, { hiddenFolders: [], topLevelFolders: [], ...options });
+	return new TagMap(notes, { hiddenFolders: [], topLevelFolders: [], exclusiveFolders: [], ...options });
 }
 
 describe('TagMap', () => {
@@ -32,6 +32,22 @@ describe('TagMap', () => {
 			expect(map([a], { topLevelFolders: ['foo/bar'], hiddenFolders: ['foo'] }).tagsOf(a)).toEqual(['bar/x']);
 			expect(map([a], { topLevelFolders: ['foo/bar'], hiddenFolders: ['foo/bar'] }).tagsOf(a)).toEqual([]);
 			expect(map([a], { topLevelFolders: ['foo/bar'], hiddenFolders: ['bar'] }).tagsOf(a)).toEqual([]);
+		});
+
+		it('keeps only the tags of exclusive folders, with their sub-tags, on notes that have them', () => {
+			const a = note('A', 'Inbox', 'source/book', 'inbox/later', 'archive');
+			const b = note('B', 'source/book', 'inboxes');
+			const m = map([a, b], { exclusiveFolders: ['inbox', 'archive'] });
+			expect(m.tagsOf(a)).toEqual(['Inbox', 'inbox/later', 'archive']);
+			expect(m.tagsOf(b)).toEqual(['source/book', 'inboxes']);
+		});
+
+		it('finds exclusive folders where they are shown', () => {
+			const a = note('A', 'foo/bar/x', 'qux');
+			expect(map([a], { topLevelFolders: ['foo/bar'], exclusiveFolders: ['foo/bar'] }).tagsOf(a)).toEqual(['bar/x']);
+			// A hidden exclusive folder has nowhere to keep its notes, so they stay under their other tags.
+			const b = note('B', 'inbox', 'qux');
+			expect(map([b], { hiddenFolders: ['inbox'], exclusiveFolders: ['inbox'] }).tagsOf(b)).toEqual(['qux']);
 		});
 	});
 

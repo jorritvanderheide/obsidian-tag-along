@@ -8,6 +8,7 @@ const defaults: TreeOptions = {
 	showUntagged: false,
 	hiddenFolders: [],
 	topLevelFolders: [],
+	exclusiveFolders: [],
 	flatFolders: [],
 	folderOrder: [],
 	folderOrderEnd: [],
@@ -123,6 +124,39 @@ describe('TagTree', () => {
 			const t = tree(withFilter, { hiddenFolders: ['qux'], filterFolders: true });
 			const foo = t.root().folders[0];
 			expect(foo && t.children(foo).filters).toEqual([]);
+		});
+	});
+
+	describe('exclusive folders', () => {
+		const notes = [
+			note('A', 'inbox', 'source/book', 'status/new'),
+			note('B', 'source/book', 'status/new'),
+			note('C', 'source/book', 'status/done'),
+		];
+
+		it('lists their notes there alone', () => {
+			const t = tree(notes, { exclusiveFolders: ['inbox'] });
+			expect(outline(t, t.root())).toEqual([
+				'inbox/',
+				'  A',
+				'source/',
+				'  book/',
+				'    B',
+				'    C',
+				'status/',
+				'  done/',
+				'    C',
+				'  new/',
+				'    B',
+			]);
+			expect(t.pathToNote('A.md')?.map((node) => node.label)).toEqual(['inbox']);
+		});
+
+		it('keeps their notes out of filter folders elsewhere', () => {
+			const t = tree(notes, { exclusiveFolders: ['inbox'], filterFolders: true });
+			const book = sourceBook(t);
+			const status = book && t.children(book).filters.find((f) => f.label === 'status');
+			expect(status?.notes.map((n) => n.name)).toEqual(['B', 'C']);
 		});
 	});
 
