@@ -15,6 +15,8 @@ export interface TagAlongSettings {
 	showUntagged: boolean;
 	openTagsInExplorer: boolean;
 	hiddenFolders: string[];
+	/** Top-level tags shown only as filter folders, not as folders of their own. */
+	filterOnlyFolders: string[];
 	/** Sub-tags that get a top-level folder of their own, as written in notes. */
 	topLevelFolders: string[];
 	/** Folders whose notes appear nowhere else in the tree, as written in notes. */
@@ -43,6 +45,7 @@ export const DEFAULT_SETTINGS: TagAlongSettings = {
 	showUntagged: false,
 	openTagsInExplorer: false,
 	hiddenFolders: [],
+	filterOnlyFolders: [],
 	topLevelFolders: [],
 	exclusiveFolders: [],
 	flatFolders: [],
@@ -97,6 +100,7 @@ export function migrateSettings(data: unknown): TagAlongSettings {
 		showUntagged: bool(source.showUntagged, d.showUntagged),
 		openTagsInExplorer: bool(source.openTagsInExplorer, d.openTagsInExplorer),
 		hiddenFolders: tags(source.hiddenFolders),
+		filterOnlyFolders: topLevelTags(source.filterOnlyFolders),
 		topLevelFolders: subTags(source.topLevelFolders),
 		exclusiveFolders: tags(source.exclusiveFolders),
 		flatFolders: tags(source.flatFolders),
@@ -215,6 +219,11 @@ function tags(value: unknown): string[] {
 /** Only sub-tags can be moved to the top level; a top-level tag is already there. */
 function subTags(value: unknown): string[] {
 	return tags(value).filter((tag) => tag.includes('/'));
+}
+
+/** Filter folders go by top-level tag, so only those can be filter-only. */
+function topLevelTags(value: unknown): string[] {
+	return tags(value).filter((tag) => !tag.includes('/'));
 }
 
 /** The last level of a tag: the name its folder gets at the top level. */

@@ -7,6 +7,8 @@ export interface TreeOptions extends TagMapOptions {
 	compactFolders: boolean;
 	/** Offer folders that narrow a folder's notes down by another namespace. */
 	filterFolders: boolean;
+	/** Top-level tags that get no folder of their own and only show up as filter folders. */
+	filterOnlyFolders: string[];
 	/** Folders that list every note below them instead of showing sub-folders. */
 	flatFolders: string[];
 	/** Show notes without tags at the top level. */
@@ -86,6 +88,8 @@ export class TagTree {
 	private readonly flat: Set<string>;
 	/** The folders kept last, as their tags are shown in the tree. */
 	private readonly pinned: Set<string>;
+	/** The top-level tags left out of the top of the tree, offered only as filters. */
+	private readonly filterOnly: Set<string>;
 
 	// An index of the whole tree, built once, so opening a folder is a lookup instead of a scan.
 	/** Notes with this tag or a tag below it. */
@@ -107,6 +111,7 @@ export class TagTree {
 		last.forEach((tag, index) => this.orderRank.set(tag, this.flowRank + 1 + index));
 		this.pinned = new Set(last);
 		this.flat = new Set(this.tags.shownTags(options.flatFolders));
+		this.filterOnly = new Set(options.filterOnlyFolders);
 		for (const note of notes) this.addToIndex(note, this.tags.lowerTagsOf(note));
 	}
 
@@ -196,9 +201,12 @@ export class TagTree {
 	}
 
 	private computeRoot(): Children {
-		const untagged = this.notes.filter((note) => this.tagsOf(note).length === 0);
+		// A note with only filter-only tags has no folder to be in, so it counts as untagged.
+		const untagged = this.notes.filter((note) =>
+			this.tagsOf(note).every((tag) => this.filterOnly.has(namespaceOf(tag))),
+		);
 		const folders = [...this.notesUnder]
-			.filter(([tag]) => !tag.includes('/'))
+			.filter(([tag]) => !tag.includes('/') && !this.filterOnly.has(tag))
 			.map(([namespace, notes]) => this.createNode('folder', namespace, notes, [namespace], undefined));
 		return {
 			folders: this.orderByHand(this.sortFolders(folders)),
@@ -395,15 +403,22 @@ export class TagTree {
 	}
 
 	private sortFolders(folders: FolderNode[]): FolderNode[] {
-		const compare = compareFolders(this.options.folderSort);
-		return folders.sort((a, b) =>
-			compare({ label: a.label, count: a.notes.length }, { label: b.label, count: b.notes.length }),
-		);
+		return folders
+			.map((node) => ({ node, label: node.label, count: node.notes.length, mtime: newestMtime(node.notes) }))
+			.sort(compareFolders(this.options.folderSort))
+			.map((entry) => entry.node);
 	}
 
 	private sortNotes(notes: NoteEntry[]): NoteEntry[] {
 		return [...notes].sort(compareNotes(this.options.noteSort));
 	}
+}
+
+/** The modified time of the most recently modified note. */
+function newestMtime(notes: NoteEntry[]): number {
+	let newest = 0;
+	for (const note of notes) if (note.mtime > newest) newest = note.mtime;
+	return newest;
 }
 
 /** Adds `note` to the list under `key`, unless it was the last one added. */

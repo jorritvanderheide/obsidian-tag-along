@@ -7,6 +7,7 @@ const defaults: TreeOptions = {
 	filterFolders: false,
 	showUntagged: false,
 	hiddenFolders: [],
+	filterOnlyFolders: [],
 	topLevelFolders: [],
 	exclusiveFolders: [],
 	flatFolders: [],
@@ -127,6 +128,20 @@ describe('TagTree', () => {
 		});
 	});
 
+	describe('filter-only folders', () => {
+		const notes = [note('A', 'foo', 'status/active'), note('B', 'foo', 'status/done'), note('C', 'status/active')];
+
+		it('shows no top-level folder for them, but still offers them as filter folders', () => {
+			const t = tree(notes, { filterOnlyFolders: ['status'], filterFolders: true });
+			expect(outline(t, t.root())).toEqual(['foo/', '  A', '  B', '  ~status/', '    active/', '      A', '    done/', '      B']);
+		});
+
+		it('lists notes with no other tags as untagged when that is enabled', () => {
+			const t = tree(notes, { filterOnlyFolders: ['status'], showUntagged: true });
+			expect(outline(t, t.root(), 1)).toEqual(['foo/', 'C']);
+		});
+	});
+
 	describe('exclusive folders', () => {
 		const notes = [
 			note('A', 'inbox', 'source/book', 'status/new'),
@@ -237,6 +252,16 @@ describe('TagTree', () => {
 			const notes = [note('A', 'aa'), note('B', 'bb'), note('C', 'bb'), note('D', 'cc')];
 			const t = tree(notes, { folderOrder: ['cc'], folderSort: 'count-desc' });
 			expect(t.root().folders.map((f) => f.label)).toEqual(['cc', 'bb', 'aa']);
+		});
+
+		it('sorts folders by the newest note anywhere below them', () => {
+			const notes = [
+				{ ...note('A', 'aa'), mtime: 2 },
+				{ ...note('B', 'bb/deep'), mtime: 3 },
+				{ ...note('C', 'cc'), mtime: 1 },
+			];
+			const t = tree(notes, { folderSort: 'modified-desc' });
+			expect(t.root().folders.map((f) => f.label)).toEqual(['bb', 'aa', 'cc']);
 		});
 
 		it('puts the folders kept last after the ones left to the sort order', () => {

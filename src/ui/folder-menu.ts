@@ -21,6 +21,7 @@ export function showFolderMenu(evt: MouseEvent, plugin: PluginHost, tree: TagTre
 	addSortOrderItem(menu, plugin, tree, node);
 	addIconItems(menu, plugin, tree, node);
 	addExclusiveItem(menu, plugin, tree, node);
+	addFilterOnlyItem(menu, plugin, tree, node);
 	addHideItem(menu, plugin, tree, node);
 	menu.showAtMouseEvent(evt);
 }
@@ -173,6 +174,24 @@ function addExclusiveItem(menu: Menu, plugin: PluginHost, tree: TagTree, node: F
 							? s.exclusiveFolders.filter((exclusive) => !current.includes(exclusive))
 							: [...s.exclusiveFolders, tag],
 				}));
+			}),
+	);
+}
+
+/**
+ * Lets a top-level folder show up only as a filter folder. Folders moved to the top level are never
+ * offered as filters, so they cannot. Like a hidden folder, it cannot be right-clicked afterwards.
+ */
+function addFilterOnlyItem(menu: Menu, plugin: PluginHost, tree: TagTree, node: FolderNode): void {
+	if (!node.isTopLevel || tree.tags.movedFrom(node.chain[0] ?? '').length > 0) return;
+	const tag = tree.levelTag(node);
+	menu.addItem((item) =>
+		item
+			.setTitle('Show only as filter')
+			.setIcon('filter')
+			.onClick(() => {
+				void plugin.updateSettings((s) => ({ filterOnlyFolders: [...s.filterOnlyFolders, tag] }));
+				new Notice(`#${tag} now only shows up as a filter folder. Undo it under Filter-only folders in the settings.`);
 			}),
 	);
 }

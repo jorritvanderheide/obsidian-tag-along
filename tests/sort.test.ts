@@ -22,9 +22,9 @@ describe('compareNotes', () => {
 
 describe('compareFolders', () => {
 	const folders = [
-		{ label: 'beta', count: 2 },
-		{ label: 'Alpha', count: 5 },
-		{ label: 'gamma', count: 2 },
+		{ label: 'beta', count: 2, mtime: 1 },
+		{ label: 'Alpha', count: 5, mtime: 3 },
+		{ label: 'gamma', count: 2, mtime: 1 },
 	];
 	const labels = (sort: Parameters<typeof compareFolders>[0]) => [...folders].sort(compareFolders(sort)).map((f) => f.label);
 
@@ -33,5 +33,9 @@ describe('compareFolders', () => {
 		expect(labels('name-desc')).toEqual(['gamma', 'beta', 'Alpha']);
 		expect(labels('count-desc')).toEqual(['Alpha', 'beta', 'gamma']);
 		expect(labels('count-asc')).toEqual(['beta', 'gamma', 'Alpha']);
+	});
+
+	it('sorts by most recently modified note, with names breaking ties', () => {
+		expect(labels('modified-desc')).toEqual(['Alpha', 'beta', 'gamma']);
 	});
 });

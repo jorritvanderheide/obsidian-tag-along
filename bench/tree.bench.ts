@@ -8,6 +8,7 @@ const options: TreeOptions = {
 	filterFolders: true,
 	showUntagged: false,
 	hiddenFolders: ['topic/value-1'],
+	filterOnlyFolders: [],
 	topLevelFolders: ['project/value-2'],
 	exclusiveFolders: [],
 	flatFolders: [],

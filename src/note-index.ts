@@ -59,9 +59,10 @@ export class NoteIndex {
 		return [...this.notes.values()].filter((note) => isNoteVisible(note, scope));
 	}
 
-	/** Dates only change the tree when notes are sorted by them; otherwise typing does not redraw it. */
+	/** Dates only change the tree when notes or folders are sorted by them; otherwise typing does not redraw it. */
 	private sortsByDate(): boolean {
-		return !this.settings().noteSort.startsWith('name');
+		const { noteSort, folderSort } = this.settings();
+		return !noteSort.startsWith('name') || folderSort === 'modified-desc';
 	}
 
 	/** Every tag in the vault and its parent levels (normalized), for pickers. */

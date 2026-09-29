@@ -16,6 +16,7 @@ const FOLDER_SORT_LABELS: Record<FolderSort, string> = {
 	'name-desc': 'Name (Z to A)',
 	'count-desc': 'Most notes first',
 	'count-asc': 'Fewest notes first',
+	'modified-desc': 'Most recently modified note first',
 };
 
 /** The toolbar's sort menu: one choice for notes and one for folders. */

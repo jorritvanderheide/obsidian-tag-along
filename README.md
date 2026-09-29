@@ -27,12 +27,13 @@ A note is listed in the deepest folder for each of its tags. A note tagged both 
 
 - **Compact folders.** A folder whose only content is one sub-folder is shown as a single entry, such as `project/website`.
 - **Filter folders.** Inside a folder, your other namespaces appear as grayed-out folders below the notes. Open one to narrow the folder's notes down by that namespace. For example, open `source/book`, then `status`, to see which book notes are `active` or `done`. Filters narrow down the notes listed directly in the folder (sub-folders already split up the rest). They can be chained, and only appear when they actually narrow the notes down.
-- **Sorting.** Sort notes by name, modified or created time, and folders by name or number of notes, from the toolbar.
+- **Sorting.** Sort notes by name, modified or created time, and folders by name, number of notes, or most recently modified note, from the toolbar.
 - **Expand or collapse all** folders with one button.
 - **Your own order.** Drag a folder up or down to put it where you want it, at any level. The folders you place stay where you put them; the ones you leave alone follow the sort order, in between. Right-click a folder you placed and choose **Follow sort order** to undo it.
 - **Pinned folders.** Drop a folder below all the others, or right-click it and choose **Pin to bottom**, to keep it at the bottom of the pane, below the folders that follow the sort order.
 - **Flat folders.** Right-click a folder with sub-folders and choose **Flatten folder** to list every note below it in one flat folder, from its sub-tags too.
 - **Exclusive folders.** Right-click a folder and choose **Keep notes only here** to list its notes there alone, not under their other tags. Handy for an `inbox` or `archive` tag: remove the tag from a note and it shows up under its other tags again.
+- **Filter-only folders.** Right-click a top-level folder and choose **Show only as filter** for tags you only filter by, like `status` or `priority`. It leaves the top of the tree but still shows up as a filter folder inside other folders. Undo it from the **Filter-only folders** setting.
 - **Hidden folders.** Right-click a folder and choose **Hide folder** to hide it with its sub-folders. Its notes still appear under their other tags. Show it again from the **Hidden folders** setting.
 - **Top-level folders.** Right-click a sub-folder and choose **Move to top level** to move a sub-tag out of its parent into a top-level folder of its own, merged with a folder of the same name.
 - **Folder icons.** Right-click a folder and choose **Set icon...** to show one of Obsidian's icons in place of its collapse arrow.
@@ -79,6 +80,7 @@ None has a hotkey, so pick your own.
 | Filter folders | On | Show your other namespaces as grayed-out folders to narrow a folder's notes down. |
 | Flat folders | None | These folders list every note below them, from their sub-tags too, instead of showing sub-folders. |
 | Exclusive folders | None | Notes with these tags (or their sub-tags) appear only in these folders, not under their other tags. |
+| Filter-only folders | None | These top-level tags get no folder of their own and only show up as filter folders. Notes without any other tags count as untagged. |
 | Hidden folders | None | These tags and their sub-tags get no folder, but their notes still appear under their other tags. Folders moved to the top level stay visible even when the tag they came from is hidden. |
 | Folder order | None | The folders you dragged into place, and the ones pinned to the bottom of the pane. Remove one to let it follow the sort order again. |
 | Top-level folders | None | These sub-tags get a top-level folder of their own, merged with a folder of the same name. |

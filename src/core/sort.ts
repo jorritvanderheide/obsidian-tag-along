@@ -3,7 +3,7 @@ import type { NoteEntry } from './tags';
 export const NOTE_SORTS = ['name-asc', 'name-desc', 'modified-desc', 'modified-asc', 'created-desc', 'created-asc'] as const;
 export type NoteSort = (typeof NOTE_SORTS)[number];
 
-export const FOLDER_SORTS = ['name-asc', 'name-desc', 'count-desc', 'count-asc'] as const;
+export const FOLDER_SORTS = ['name-asc', 'name-desc', 'count-desc', 'count-asc', 'modified-desc'] as const;
 export type FolderSort = (typeof FOLDER_SORTS)[number];
 
 const collator = new Intl.Collator(undefined, { numeric: true, sensitivity: 'base' });
@@ -29,8 +29,18 @@ export function compareNotes(sort: NoteSort): (a: NoteEntry, b: NoteEntry) => nu
 	}
 }
 
-/** Orders folders by name or by how many notes they hold. Folders with the same count are ordered by name. */
-export function compareFolders(sort: FolderSort): (a: { label: string; count: number }, b: { label: string; count: number }) => number {
+/** What folders are ordered by: `mtime` is the modified time of the newest note in the folder. */
+export interface FolderSortKey {
+	label: string;
+	count: number;
+	mtime: number;
+}
+
+/**
+ * Orders folders by name, by how many notes they hold, or by their most recently modified note.
+ * Folders that tie are ordered by name.
+ */
+export function compareFolders(sort: FolderSort): (a: FolderSortKey, b: FolderSortKey) => number {
 	switch (sort) {
 		case 'name-asc':
 			return (a, b) => byName(a.label, b.label);
@@ -40,5 +50,7 @@ export function compareFolders(sort: FolderSort): (a: { label: string; count: nu
 			return (a, b) => b.count - a.count || byName(a.label, b.label);
 		case 'count-asc':
 			return (a, b) => a.count - b.count || byName(a.label, b.label);
+		case 'modified-desc':
+			return (a, b) => b.mtime - a.mtime || byName(a.label, b.label);
 	}
 }

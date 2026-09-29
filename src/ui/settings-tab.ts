@@ -12,6 +12,7 @@ import { ChoiceModal } from './choice-modal';
 type FolderListKey = 'includedFolders' | 'excludedFolders';
 type TagListKey =
 	| 'hiddenFolders'
+	| 'filterOnlyFolders'
 	| 'topLevelFolders'
 	| 'exclusiveFolders'
 	| 'flatFolders'
@@ -118,6 +119,22 @@ export class TagAlongSettingTab extends PluginSettingTab {
 								'Add a folder',
 								'Choose a tag to keep its notes to itself...',
 								'No exclusive folders.',
+							),
+						],
+					},
+					{
+						type: 'page',
+						name: 'Filter-only folders',
+						desc: 'These top-level tags get no folder of their own, and only show up as filter folders inside other folders. Handy for tags you only filter by, like "status" or "priority". Needs filter folders to be turned on. Notes without any other tags count as untagged. You can also right-click a top-level folder and choose "Show only as filter".',
+						displayValue: () => countLabel(settings().filterOnlyFolders.length, 'folder', 'folders'),
+						items: [
+							this.tagList(
+								'filterOnlyFolders',
+								// Folders moved to the top level are never offered as filters.
+								() => allTags().filter((tag) => !tag.includes('/') && !topLevelNames().includes(tag)),
+								'Add a folder',
+								'Choose a top-level tag to show only as a filter...',
+								'No filter-only folders.',
 							),
 						],
 					},
