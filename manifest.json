@@ -3,7 +3,7 @@
 	"name": "Tag Along",
 	"version": "2.4.0",
 	"minAppVersion": "1.13.0",
-	"description": "Navigate your vault through a tag-generated folder tree.",
+	"description": "Browse your vault as a folder tree built from your tags.",
 	"author": "Jorrit van der Heide",
 	"authorUrl": "https://github.com/jorritvanderheide",
 	"fundingUrl": "https://liberapay.com/BW20",
