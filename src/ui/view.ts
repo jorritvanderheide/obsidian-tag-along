@@ -41,7 +41,9 @@ export class TagAlongView extends ItemView implements HoverParent {
 		rename: (rowEl, file) => this.rename.start(rowEl, file),
 	});
 	private readonly drag = new TreeDrag({
+		app: this.app,
 		renderer: () => this.renderer,
+		notesAt: (noteEl) => this.notesAt(noteEl),
 		siblings: (node) => this.siblings(node),
 		reorder: (dragged, target, before) => this.reorder(dragged, target, before),
 	});
@@ -206,6 +208,12 @@ export class TagAlongView extends ItemView implements HoverParent {
 		void this.plugin.updateSettings((s) =>
 			reorderFolders(s, siblings, tree.levelTag(dragged), tree.levelTag(target), before),
 		);
+	}
+
+	private notesAt(noteEl: HTMLElement): TFile[] {
+		const path = noteEl.dataset.path ?? '';
+		const file = this.app.vault.getFileByPath(path);
+		return this.input.selectionFor(path) ?? (file ? [file] : []);
 	}
 
 	private toggleFolder(row: FolderRow): void {

@@ -48,6 +48,8 @@ export class TreeRename {
 		});
 		this.editing = { rowEl, titleEl, file, title: titleEl.getText(), scope };
 		rowEl.addClass('is-being-renamed');
+		// A draggable row would start a drag where you select part of the name.
+		rowEl.setAttribute('draggable', 'false');
 		titleEl.setAttribute('contenteditable', 'true');
 		titleEl.addEventListener('blur', () => this.finish(true), { once: true });
 		this.app.keymap.pushScope(scope);
@@ -61,6 +63,7 @@ export class TreeRename {
 		const { rowEl, titleEl, file, title, scope } = editing;
 		this.app.keymap.popScope(scope);
 		rowEl.removeClass('is-being-renamed');
+		rowEl.setAttribute('draggable', 'true');
 		titleEl.removeAttribute('contenteditable');
 		const newTitle = titleEl.getText().replace(/\s+/g, ' ').trim();
 		const rename = save && newTitle !== '' && newTitle !== title;

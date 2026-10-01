@@ -191,7 +191,7 @@ export class TreeRenderer {
 		const itemEl = parentEl.createDiv({ cls: 'tree-item nav-file' });
 		const selfEl = itemEl.createDiv({
 			cls: 'tree-item-self nav-file-title is-clickable tappable',
-			attr: { 'data-path': note.path, role: 'treeitem' },
+			attr: { 'data-path': note.path, role: 'treeitem', draggable: 'true' },
 		});
 		this.setDepth(selfEl, depth);
 		selfEl.toggleClass('is-active', note.path === this.state.activePath());

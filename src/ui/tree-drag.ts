@@ -1,9 +1,13 @@
+import type { App, TFile } from 'obsidian';
 import { isSamePlace } from '../core/reorder';
 import type { FolderNode } from '../core/tree';
 import type { FolderRow, TreeRenderer } from './tree-renderer';
 
 export interface TreeDragHost {
+	readonly app: App;
 	renderer(): TreeRenderer;
+	/** The notes a dragged note row takes along: the selection it is in, or just that note. */
+	notesAt(noteEl: HTMLElement): TFile[];
 	/** The folders at the level of `node`, in the order they are shown. */
 	siblings(node: FolderNode): FolderNode[];
 	reorder(dragged: FolderNode, target: FolderNode, before: boolean): void;
@@ -15,10 +19,20 @@ interface DropTarget {
 	before: boolean;
 }
 
+/** What the core file explorer drags files with. Obsidian doesn't document it. */
+interface DragManager {
+	dragFile(evt: DragEvent, file: TFile): unknown;
+	dragFiles(evt: DragEvent, files: TFile[]): unknown;
+	onDragStart(evt: DragEvent, data: unknown): void;
+}
+
 const DROP_BEFORE = 'tag-along-drop-before';
 const DROP_AFTER = 'tag-along-drop-after';
 
-/** Dragging a tag folder to change its order among its siblings. The view forwards its drag events. */
+/**
+ * Dragging a tag folder to change its order among its siblings, and dragging notes out of the tree
+ * the way the core file explorer does. The view forwards its drag events.
+ */
 export class TreeDrag {
 	private draggedKey: string | null = null;
 	/** The row the drop line is drawn on. */
@@ -27,6 +41,11 @@ export class TreeDrag {
 	constructor(private readonly host: TreeDragHost) {}
 
 	onDragStart(evt: DragEvent): void {
+		const noteEl = this.host.renderer().noteRowAt(evt.target);
+		if (noteEl) {
+			this.dragNotes(evt, this.host.notesAt(noteEl));
+			return;
+		}
 		const dragged = this.host.renderer().folderRowAt(evt.target);
 		if (!dragged || dragged.node.kind !== 'folder') {
 			evt.preventDefault();
@@ -69,6 +88,18 @@ export class TreeDrag {
 	clearIndicator(): void {
 		this.indicatorEl?.removeClasses([DROP_BEFORE, DROP_AFTER]);
 		this.indicatorEl = null;
+	}
+
+	/** Hands the notes to Obsidian, so an editor or pane they're dropped on takes them as from the file explorer. */
+	private dragNotes(evt: DragEvent, files: TFile[]): void {
+		const dragManager = (this.host.app as App & { dragManager?: DragManager }).dragManager;
+		const [first] = files;
+		if (!dragManager || !first) {
+			evt.preventDefault();
+			return;
+		}
+		const data = files.length === 1 ? dragManager.dragFile(evt, first) : dragManager.dragFiles(evt, files);
+		dragManager.onDragStart(evt, data);
 	}
 
 	/** Where the dragged folder would land: another folder of the same level, above or below it. */

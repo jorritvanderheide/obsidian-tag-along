@@ -184,7 +184,9 @@ If you want to work on the plugin:
 - **The menu you know** - Right-click a note for the same menu as in the core
   file explorer, including what other plugins add.
 - **Several notes at once** - Alt-click and Shift-click to select notes, then
-  delete or move them together.
+  delete, move or drag them together.
+- **Drag notes out** - Drop a note in another note to link to it, or anywhere
+  else you'd drop one from the core file explorer.
 - **Rename in place** - Press F2 to rename a note right in the tree.
 - **Hover previews** - Hold Ctrl or Cmd and hover over a note.
 - **Copy tags** - Right-click a folder to copy the tags that lead to it, such as
@@ -276,6 +278,7 @@ When the Tag Along pane has focus:
 | Shift+click | Select every note between the last one and this one |
 | Right-click | The note or folder menu, or the menu for the selection |
 | Drag a folder | Put it in your own order, or drop it below all others to pin it |
+| Drag a note | Drop it in a note to link to it, like from the file explorer. Drags all selected notes when it's one of them |
 | Ctrl/Cmd+hover | Preview the note |
 
 Delete asks for confirmation the way Obsidian's own settings say it should.
@@ -388,6 +391,8 @@ Only when you ask for it, and only these:
   settings say so.
 - **Move:** Through Obsidian's own move dialog, from the menu for selected
   notes.
+- **Drag:** Dragging a note out of the tree hands it to Obsidian, the way the
+  core file explorer does. Drop it in a note and Obsidian adds a link there.
 
 Nothing else Tag Along does touches a note: hiding, flattening, pinning,
 moving or reordering folders only changes its settings.

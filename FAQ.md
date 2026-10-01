@@ -76,8 +76,9 @@ settings, and a filter-only folder from **Filter-only folders**.
 
 ### Can I drag a note onto a folder to tag it?
 
-No. Dragging only puts folders in your own order. To tag a note, edit its tags
-in the note.
+No. Dragging a folder puts it in your own order, and dragging a note works like
+in the core file explorer, so you can drop it in a note to link to it. To tag a
+note, edit its tags in the note.
 
 ### How do I rename a folder?
 
