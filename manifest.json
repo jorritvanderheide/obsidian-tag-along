@@ -1,7 +1,7 @@
 {
 	"id": "tag-along",
 	"name": "Tag Along",
-	"version": "2.4.0",
+	"version": "2.5.0",
 	"minAppVersion": "1.13.0",
 	"description": "Browse your vault as a folder tree built from your tags.",
 	"author": "Jorrit van der Heide",
