@@ -34,8 +34,8 @@ and a note shows up under every tag it has. So the book summary sits in
 
 ## 1 Installation
 
-Go to Settings → Community plugins → Browse in Obsidian, search for "Tag
-Along", then install and enable it. You can also open
+Install Tag Along in Obsidian: go to Settings → Community plugins → Browse,
+search for "Tag Along", then install and enable it. You can also open
 [its page in the plugin directory](https://community.obsidian.md/plugins/tag-along).
 
 Tag Along needs Obsidian 1.13 or later, and works on desktop and mobile.
