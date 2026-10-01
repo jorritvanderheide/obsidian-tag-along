@@ -1,0 +1,86 @@
+name: Bug report
+description: Something in Tag Along doesn't work the way the README says it should.
+labels: ['bug']
+body:
+    - type: markdown
+      attributes:
+          value: |
+              Thanks for taking the time to report this. Before you start, have a quick look at the [FAQ](https://github.com/jorritvanderheide/obsidian-tag-along/blob/main/FAQ.md): the most common surprises, like a note that doesn't show up where you expect, are explained there.
+
+              Found a security problem? Please don't report it here. Use [private reporting](https://github.com/jorritvanderheide/obsidian-tag-along/security/advisories/new) instead.
+
+    - type: textarea
+      id: what
+      attributes:
+          label: What happened?
+          description: And what did you expect to happen instead?
+      validations:
+          required: true
+
+    - type: textarea
+      id: steps
+      attributes:
+          label: Steps to reproduce
+          description: The smallest example that shows the problem helps most, such as two or three notes and their tags. A screenshot of the tree helps too.
+          placeholder: |
+              1. Make a note tagged #source/book and #status/active
+              2. Open source/book in Tag Along
+              3. ...
+      validations:
+          required: true
+
+    - type: input
+      id: version
+      attributes:
+          label: Tag Along version
+          description: Settings → Community plugins, next to Tag Along.
+      validations:
+          required: true
+
+    - type: input
+      id: obsidian
+      attributes:
+          label: Obsidian version
+          description: Settings → General.
+      validations:
+          required: true
+
+    - type: input
+      id: os
+      attributes:
+          label: Operating system
+          placeholder: macOS 15, Windows 11, iOS 18, Android 15, ...
+      validations:
+          required: true
+
+    - type: dropdown
+      id: size
+      attributes:
+          label: Roughly how many notes are in your vault?
+          options:
+              - Fewer than 1,000
+              - 1,000 to 10,000
+              - More than 10,000
+      validations:
+          required: true
+
+    - type: checkboxes
+      id: settings
+      attributes:
+          label: Which of these are you using?
+          description: Tick everything that's turned on or has something in it.
+          options:
+              - label: Compact folders
+              - label: Filter folders
+              - label: Flat folders
+              - label: Exclusive folders
+              - label: Filter-only folders
+              - label: Hidden folders
+              - label: Top-level folders
+              - label: Included or excluded folders, or excluded tags
+
+    - type: textarea
+      id: extra
+      attributes:
+          label: Anything else?
+          description: Other plugins that change tags or the file explorer, an error from the developer console (Ctrl+Shift+I, or Cmd+Option+I on a Mac), or anything else that seems related.
