@@ -100,16 +100,9 @@ It's built for big vaults. A test vault of 20,000 notes, each with three to six
 tags, turns into a tree in about 0.16 seconds on a laptop, and only the folders
 you open are worked out.
 
-Every push is built, linted with [ESLint](https://eslint.org/) and the official
-[Obsidian ESLint plugin](https://github.com/obsidianmd/eslint-plugin), and
-tested with [Vitest](https://vitest.dev/) on Node 20, 22 and 24. Releases are
-built by GitHub Actions from the tagged source, with every action pinned to an
-exact version, and come with a signed build provenance attestation, so you can
-check that the file you installed is the one that was built:
-
-```sh
-gh attestation verify main.js --repo jorritvanderheide/obsidian-tag-along
-```
+Every push is tested, and every release is built in the open with a signed
+attestation, so you can check that the file you installed is the one that was
+built. [Section 11.4](#114-how-releases-are-built) says how.
 
 <br/>
 
@@ -406,6 +399,19 @@ moving or reordering folders only changes its settings.
   workspace layout.
 - **Clipboard:** **Copy tags** puts the tags on your clipboard, only when you
   choose it.
+
+### 11.4 How releases are built
+
+Every push is built, linted with [ESLint](https://eslint.org/) and the official
+[Obsidian ESLint plugin](https://github.com/obsidianmd/eslint-plugin), and
+tested with [Vitest](https://vitest.dev/) on Node 20, 22 and 24. Releases are
+built by GitHub Actions from the tagged source, with every action pinned to an
+exact version, and come with a signed build provenance attestation, so you can
+check that the file you installed is the one that was built:
+
+```sh
+gh attestation verify main.js --repo jorritvanderheide/obsidian-tag-along
+```
 
 <br/>
 
