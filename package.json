@@ -1,6 +1,6 @@
 {
 	"name": "obsidian-tag-along",
-	"version": "2.5.0",
+	"version": "2.5.1",
 	"description": "Browse your vault as a folder tree built from your tags.",
 	"main": "main.js",
 	"type": "module",
