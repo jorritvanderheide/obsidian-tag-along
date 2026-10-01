@@ -108,6 +108,25 @@ settings. See
 
 ## Other
 
+### I used TagFolder. What changes?
+
+Your notes don't: both plugins read the same tags, so you can install Tag Along
+next to TagFolder and compare. Tag Along started as a fork of TagFolder, and
+version 2 is a rewrite with its own settings, so nothing carries over by itself.
+If you set TagFolder up, these are the same ideas here:
+
+| In TagFolder | In Tag Along |
+| --- | --- |
+| Archive tags | **Exclusive folders** |
+| Ignore Tag | **Hidden folders** |
+| Ignore note Tag | **Excluded tags** |
+| Target Folders | **Included folders** |
+| Ignore Folders | **Excluded folders** |
+
+The difference you'll notice first is how tags combine. Tag Along shows each
+top-level tag as its own tree, and you narrow a folder down with the grey filter
+folders inside it. See [Filter folders](README.md#62-filter-folders).
+
 ### Does it work on mobile?
 
 Yes. The tree, the menus and the settings all work on a phone or tablet. What
