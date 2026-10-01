@@ -20,10 +20,10 @@ public.
 
 Tag Along reads the tags in your vault and only changes files when you ask it
 to, through Obsidian, the way the core file explorer does. It connects to
-nothing and runs no programs. See the
-[Safety section of the README](README.md#safety). Anything that makes it connect
-somewhere, read or write files outside your vault, or run code that came from a
-note or a tag is a security problem.
+nothing and runs no programs. See
+[section 11 of the README](README.md#11-network-and-file-disclosure). Anything
+that makes it connect somewhere, read or write files outside your vault, or run
+code that came from a note or a tag is a security problem.
 
 A bug that renames, moves or deletes the wrong note is serious too, but it isn't
 secret: please report that as a normal issue, so others can see it.
