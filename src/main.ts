@@ -183,12 +183,12 @@ export default class TagAlongPlugin extends Plugin implements PluginHost {
 
 	async revealNote(path: string): Promise<void> {
 		const view = await this.openView();
-		if (!view?.revealNote(path)) new Notice('This note is not shown in Tag Along.');
+		if (!view?.revealNote(path)) new Notice("This note isn't shown in Tag Along.");
 	}
 
 	async revealTag(tag: string): Promise<void> {
 		const view = await this.openView();
-		if (!view?.revealTag(tag)) new Notice(`#${tag.replace(/^#/, '')} is not shown in Tag Along.`);
+		if (!view?.revealTag(tag)) new Notice(`#${tag.replace(/^#/, '')} isn't shown in Tag Along.`);
 	}
 
 	private async openView(): Promise<TagAlongView | undefined> {

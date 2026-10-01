@@ -25,11 +25,11 @@ Check these in order:
 - **Is it a Markdown note?** Tag Along only shows `.md` files, because only
   those have tags.
 
-### "This note is not shown in Tag Along."
+### "This note isn't shown in Tag Along."
 
 You tried to reveal a note that isn't in the tree, for one of the reasons above.
 
-### "#… is not shown in Tag Along."
+### "#… isn't shown in Tag Along."
 
 You clicked a tag whose folder isn't in the tree: it's hidden, excluded, or
 filter-only. Ctrl-click or Cmd-click a tag to search for it instead.
@@ -94,7 +94,7 @@ heading and the `title` property, if they showed the old name. The file is only
 renamed when it was named after the old name too, so a file name that's an ID
 or a citation key stays as it is.
 
-### "Kept the file name, as … already exists."
+### "Kept the file name, because … already exists."
 
 The new name was already taken by another file in the same folder. The heading
 and `title` property were renamed, the file name stayed the same.

@@ -49,13 +49,13 @@ export class TagAlongSettingTab extends PluginSettingTab {
 					},
 					{
 						name: 'Filter folders',
-						desc: 'Inside a folder, show your other tag namespaces as grayed-out folders below the notes. Open one to narrow the folder\'s notes down by that namespace.',
+						desc: "Inside a folder, show your other top-level tags as grey folders below the notes. Open one to narrow the folder's notes down by that tag.",
 						control: { type: 'toggle', key: 'filterFolders' },
 					},
 					{
 						type: 'page',
 						name: 'Folder order',
-						desc: 'Folders you dragged into place in the tree, and folders pinned to the bottom of the pane. Every other folder follows the sort order, in between the two. Remove a folder here, or right-click it and choose "Follow sort order", to let it follow the sort order again.',
+						desc: 'Folders you dragged into place in the tree, and folders pinned to the bottom of the pane. Every other folder follows the sort order, in between. To undo it, remove a folder here, or right-click it and choose "Follow sort order".',
 						displayValue: () =>
 							countLabel(settings().folderOrder.length + settings().folderOrderEnd.length, 'folder', 'folders'),
 						items: [
@@ -63,7 +63,7 @@ export class TagAlongSettingTab extends PluginSettingTab {
 								...this.list(
 									'folderOrder',
 									settings().folderOrder.map((tag) => `#${tag}`),
-									'No folders put in order. Drag a folder in the tree to change where it appears.',
+									'No folders in your own order yet. Drag a folder in the tree to put it where you want it.',
 								),
 								heading: 'Shown first',
 							},
@@ -71,7 +71,7 @@ export class TagAlongSettingTab extends PluginSettingTab {
 								...this.list(
 									'folderOrderEnd',
 									settings().folderOrderEnd.map((tag) => `#${tag}`),
-									'No folders pinned. Drag a folder below all the others, or right-click it and choose "Pin to bottom".',
+									'No pinned folders yet. Drag a folder below all the others, or right-click it and choose "Pin to bottom".',
 								),
 								heading: 'Pinned to the bottom',
 							},
@@ -80,7 +80,7 @@ export class TagAlongSettingTab extends PluginSettingTab {
 					{
 						type: 'page',
 						name: 'Top-level folders',
-						desc: 'These sub-tags move out of their parent and get a folder of their own at the top of the tree, merged with a folder of the same name. They are not offered as filter folders. You can also right-click a folder and choose "Move to top level".',
+						desc: 'These sub-tags move out of their parent and get a folder of their own at the top of the tree, merged with a folder of the same name. They aren\'t offered as filter folders. You can also right-click a folder and choose "Move to top level".',
 						displayValue: () => countLabel(settings().topLevelFolders.length, 'folder', 'folders'),
 						items: [
 							this.tagList(
@@ -110,7 +110,7 @@ export class TagAlongSettingTab extends PluginSettingTab {
 					{
 						type: 'page',
 						name: 'Exclusive folders',
-						desc: 'Notes with these tags appear only in these folders, not under their other tags, and their other tags are not offered as filter folders. Sub-tags count too: "inbox" also keeps notes tagged "inbox/later" to itself. You can also right-click a folder and choose "Keep notes only here".',
+						desc: 'Notes with these tags show up only in these folders, not under their other tags, and their other tags aren\'t offered as filter folders. Sub-tags count too: "inbox" also keeps notes tagged "inbox/later" to itself. You can also right-click a folder and choose "Keep notes only here".',
 						displayValue: () => countLabel(settings().exclusiveFolders.length, 'folder', 'folders'),
 						items: [
 							this.tagList(
@@ -125,7 +125,7 @@ export class TagAlongSettingTab extends PluginSettingTab {
 					{
 						type: 'page',
 						name: 'Filter-only folders',
-						desc: 'These top-level tags get no folder of their own, and only show up as filter folders inside other folders. Handy for tags you only filter by, like "status" or "priority". Needs filter folders to be turned on. Notes without any other tags count as untagged. You can also right-click a top-level folder and choose "Show only as filter".',
+						desc: 'These top-level tags get no folder of their own, and only show up as filter folders inside other folders. Handy for tags you only filter by, like "status" or "priority". This needs filter folders to be on. Notes without any other tags count as untagged. You can also right-click a top-level folder and choose "Show only as filter".',
 						displayValue: () => countLabel(settings().filterOnlyFolders.length, 'folder', 'folders'),
 						items: [
 							this.tagList(
@@ -141,7 +141,7 @@ export class TagAlongSettingTab extends PluginSettingTab {
 					{
 						type: 'page',
 						name: 'Hidden folders',
-						desc: 'These tags and their sub-tags get no folder, and are not offered as filter folders. Their notes still appear under their other tags; notes without any other tags count as untagged. Folders moved to the top level stay visible, even when the tag they came from is hidden. You can also right-click a folder and choose "Hide folder".',
+						desc: 'These tags and their sub-tags get no folder, and aren\'t offered as filter folders. Their notes still show up under their other tags, and notes without any other tags count as untagged. Folders moved to the top level stay visible, even when the tag they came from is hidden. You can also right-click a folder and choose "Hide folder".',
 						displayValue: () => countLabel(settings().hiddenFolders.length, 'folder', 'folders'),
 						items: [
 							this.tagList(
@@ -176,7 +176,7 @@ export class TagAlongSettingTab extends PluginSettingTab {
 					},
 					{
 						name: 'Open tags in Tag Along',
-						desc: 'Clicking a tag in a note opens its folder here instead of searching for it. Hold Ctrl/Cmd while clicking to search as usual.',
+						desc: 'Clicking a tag in a note opens its folder here, instead of searching for it. Hold Ctrl or Cmd while clicking to search as usual.',
 						control: { type: 'toggle', key: 'openTagsInExplorer' },
 					},
 				],
@@ -188,7 +188,7 @@ export class TagAlongSettingTab extends PluginSettingTab {
 					{
 						type: 'page',
 						name: 'Included folders',
-						desc: 'Only notes inside these folders, including their sub-folders, appear in the tree. Leave empty to use the whole vault.',
+						desc: 'Only notes inside these folders, including their sub-folders, show up in the tree. Leave it empty for the whole vault.',
 						displayValue: () =>
 							settings().includedFolders.length === 0
 								? 'Whole vault'
@@ -198,7 +198,7 @@ export class TagAlongSettingTab extends PluginSettingTab {
 					{
 						type: 'page',
 						name: 'Excluded folders',
-						desc: 'Notes inside these folders, including their sub-folders, are left out, even when they are inside an included folder.',
+						desc: "Notes inside these folders, including their sub-folders, are left out, even when they're inside an included folder.",
 						displayValue: () => countLabel(settings().excludedFolders.length, 'folder', 'folders'),
 						items: [this.folderList('excludedFolders', 'Exclude a folder', 'No excluded folders.')],
 					},
