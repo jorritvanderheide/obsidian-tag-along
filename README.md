@@ -15,8 +15,7 @@ your papers by reading status. See [Works well with](#10-works-well-with).
 [![Checks](https://github.com/jorritvanderheide/obsidian-tag-along/actions/workflows/lint.yml/badge.svg)](https://github.com/jorritvanderheide/obsidian-tag-along/actions/workflows/lint.yml)
 [![License: EUPL-1.2](https://img.shields.io/badge/license-EUPL--1.2-blue?style=flat-square)](LICENSE)
 
-<!-- SCREENSHOT images/hero.png: the Tag Along pane in the left sidebar with domain, source and status trees, one folder open showing notes and grey filter folders below them, a note open on the right. -->
-![Tag Along](https://placehold.co/1200x675/png?text=Tag+Along+next+to+a+note)
+![Tag Along next to a note tagged domain/privacy and source/article: the note is in the Privacy folder, and also in Article through the grey Source filter folder](https://raw.githubusercontent.com/jorritvanderheide/obsidian-tag-along/main/images/hero.png)
 
 Folders make you choose. A summary of a book about coding goes in `Books`, or
 in `Coding`, but not in both, and half the time you look in the wrong one. Tags
@@ -76,8 +75,10 @@ Now open `source/book`. Below its notes you'll see `domain` and `status` in
 grey: these are filter folders. Open `status` inside it, and you see which of
 your book notes are `active` and which are `done`.
 
-<!-- SCREENSHOT images/filter-folders.png: source/book open, two notes listed, grey filter folders "domain" and "status" below them, with status opened to show active and done. -->
-![Filter folders](https://placehold.co/900x600/png?text=Filter+folders)
+Here's the same idea in a bigger vault: the `Privacy` folder, narrowed down by
+the `Source` filter folder to the notes that came from an article.
+
+![The Privacy folder with its notes, and below them the grey Source filter folder, opened to Article, which narrows the notes down to two](https://raw.githubusercontent.com/jorritvanderheide/obsidian-tag-along/main/images/filter-folders.png)
 
 The buttons at the top of the pane change the sort order, switch compact
 folders and filter folders on or off, and expand or collapse all folders.
@@ -360,8 +361,7 @@ of everything still waiting. Set Loose Ends' unfiled tag to `inbox`, and make
 `inbox` an exclusive folder in Tag Along: a new note then shows up in `inbox`
 only, and moves to its proper folders the moment you've finished tagging it.
 
-<!-- SCREENSHOT images/loose-ends.png: an exclusive "inbox" folder at the top of the tree with two unfiled notes, next to domain and source trees. -->
-![Tag Along with Loose Ends](https://placehold.co/900x500/png?text=Inbox+with+Loose+Ends)
+![Tag Along with the inbox folder at the top, holding the notes that still need tags, and the domain tree below](https://raw.githubusercontent.com/jorritvanderheide/obsidian-tag-along/main/images/loose-ends.png)
 
 ### 10.2 Paper Trail
 
