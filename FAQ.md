@@ -79,6 +79,14 @@ settings, and a filter-only folder from **Filter-only folders**.
 No. Dragging only puts folders in your own order. To tag a note, edit its tags
 in the note.
 
+### How do I rename a folder?
+
+A folder is a tag, so you rename the tag in every note that has it. Tag Along
+doesn't change tags, but [Tag Wrangler](https://community.obsidian.md/plugins/tag-wrangler)
+does: right-click the tag in Obsidian's Tags view and rename it, along with its
+sub-tags. Settings you made for the old folder, like hiding or pinning it, don't
+follow the new name, so set them again.
+
 ## Tags and notes
 
 ### Clicking a tag still searches instead of opening its folder
