@@ -132,6 +132,8 @@ If you want to work on the plugin:
   folder, and what happens when they meet.
 - [**Settings**](docs/settings.md) - How settings are stored, checked and
   upgraded from older versions.
+- [**Compatibility**](docs/compatibility.md) - What a release may and may not
+  change, so your settings and hotkeys keep working.
 - [**Performance**](docs/performance.md) - The benchmarks, how to run them, and
   the current numbers.
 - [**Development**](docs/development.md) - Setup, tests, checks and releases.

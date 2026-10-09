@@ -49,7 +49,8 @@ Tests are in `tests/`, one per file in `src/core/`, named after it, plus
 5. **Publish the draft.** Obsidian's community directory installs from GitHub
    releases, and a tag alone is not one.
 
-Before releasing anything that changes how settings are stored, see
+Before releasing a change, check [Compatibility](compatibility.md) for what it
+may change. If it changes how settings are stored, see
 [Settings](settings.md#changing-the-shape).
 
 ## Updating an action

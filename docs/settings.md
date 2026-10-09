@@ -38,6 +38,9 @@ version `n` into version `n + 1`:
 | 2 | Pinning split in two: sub-tags moved to the top level, and the folder order. |
 | 3 | The folder order went by the name a folder was shown with; it now goes by the tag it comes from. |
 
+Versions 2 and 3 only existed during development: 2.0.0 already saved version
+4, so in vaults these steps only ever run on 1.x data.
+
 Data from a newer version is read as the current one, keeping the settings it
 knows. That lets an older Tag Along open a vault synced from a newer one without
 losing settings it understands.

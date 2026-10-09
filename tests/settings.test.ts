@@ -8,7 +8,7 @@ describe('migrateSettings', () => {
 	});
 
 	it('reads settings from a newer version as current ones, not as 1.x', () => {
-		const future = { version: 4, showNoteCount: true, folderOrder: ['foo'], useTitle: false, newThing: 1 };
+		const future = { version: SETTINGS_VERSION + 1, showNoteCount: true, folderOrder: ['foo'], useTitle: false, newThing: 1 };
 		expect(migrateSettings(future)).toEqual({ ...DEFAULT_SETTINGS, showNoteCount: true, folderOrder: ['foo'] });
 	});
 
@@ -47,55 +47,6 @@ describe('migrateSettings', () => {
 			folderIcons: { foo: 'star' },
 			includedFolders: ['Notes'],
 			excludedFolders: ['Templates'],
-		});
-	});
-
-	it('upgrades 1.x settings', () => {
-		const v1 = {
-			displayMethod: 'NAME',
-			alwaysOpen: true,
-			ignoreDocTags: 'draft, private',
-			ignoreTags: 'source, domain/old',
-			ignoreFolders: 'Templates,\nArchive',
-			targetFolders: 'Notes, Journal/',
-			sortType: 'MTIME_DESC',
-			sortTypeTag: 'NAME_ASC',
-			hideItems: 'ALL_EXCEPT_BOTTOM',
-			scanDelay: 250,
-			useTitle: false,
-			frontmatterKey: 'title',
-			namespacedTagGuard: false,
-			doNotSimplifyTags: true,
-			overrideTagClicking: true,
-			archiveTags: 'status/archived',
-			expandUntaggedToRoot: true,
-			pinnedFolders: ['Coding'],
-			tagIcons: { Coding: 'code', empty: '' },
-			showItemCount: true,
-			filterFolderDepth: 2,
-			expandedTags: ['domain/'],
-		};
-		expect(migrateSettings(v1)).toEqual({
-			version: SETTINGS_VERSION,
-			showNoteTitles: false,
-			showNoteCount: true,
-			compactFolders: false,
-			filterFolders: true,
-			showUntagged: true,
-			noteSort: 'modified-desc',
-			folderSort: 'name-asc',
-			openTagsInExplorer: true,
-			excludedTags: ['draft', 'private'],
-			exclusiveFolders: ['status/archived'],
-			hiddenFolders: ['source', 'domain/old'],
-			filterOnlyFolders: [],
-			topLevelFolders: [],
-			flatFolders: [],
-			folderOrder: ['coding'],
-			folderOrderEnd: [],
-			folderIcons: { coding: 'code' },
-			includedFolders: ['Notes', 'Journal'],
-			excludedFolders: ['Templates', 'Archive'],
 		});
 	});
 
@@ -142,6 +93,123 @@ describe('migrateSettings', () => {
 		expect(migrateSettings({ namespacedTagGuard: false }).filterFolders).toBe(true);
 	});
 
+});
+
+/**
+ * data.json as released versions saved it, taken from their tags, with every key they wrote.
+ * Whenever the stored shape changes, add a fixture for the last release before the change,
+ * named after that version, and a test of what it becomes. See docs/compatibility.md.
+ *
+ * 1.1.0 saved the same shape as 1.1.1, 2.1.0 and 2.2.0 the same as 2.0.0. 2.3.0 added
+ * exclusiveFolders and 2.4.0 filterOnlyFolders; 2.4.0 to 2.5.1 saved the same shape.
+ * No release saved version 2 or 3: 1.x saved no version, and 2.0.0 already saved 4.
+ */
+describe('settings saved by released versions', () => {
+	// Tag Explorer 1.1.1: its settings, plus the open folders, which 1.x kept in data.json.
+	const v1_1_1 = {
+		displayMethod: 'NAME',
+		alwaysOpen: true,
+		ignoreDocTags: 'draft, private',
+		ignoreTags: 'source, domain/old',
+		ignoreFolders: 'Templates,\nArchive',
+		targetFolders: 'Notes, Journal/',
+		sortType: 'MTIME_DESC',
+		sortTypeTag: 'NAME_ASC',
+		hideItems: 'ALL_EXCEPT_BOTTOM',
+		scanDelay: 250,
+		useTitle: false,
+		frontmatterKey: 'title',
+		namespacedTagGuard: false,
+		useFrontmatterTagsForNewNotes: false,
+		doNotSimplifyTags: true,
+		overrideTagClicking: true,
+		archiveTags: 'status/archived',
+		expandUntaggedToRoot: true,
+		disableDragging: false,
+		pinnedFolders: ['Coding', 'domain/phd'],
+		tagIcons: { Coding: 'code', empty: '' },
+		showItemCount: true,
+		filterFolderDepth: 2,
+		expandedTags: ['domain/'],
+	};
+
+	const v2_0_0 = {
+		version: 4,
+		noteSort: 'modified-desc',
+		folderSort: 'count-desc',
+		showNoteTitles: false,
+		showNoteCount: true,
+		compactFolders: false,
+		filterFolders: false,
+		showUntagged: true,
+		openTagsInExplorer: true,
+		hiddenFolders: ['source'],
+		topLevelFolders: ['domain/coding'],
+		flatFolders: ['journal'],
+		folderOrder: ['domain/coding', 'status'],
+		folderOrderEnd: ['archive'],
+		folderIcons: { 'domain/coding': 'code' },
+		includedFolders: ['Notes'],
+		excludedFolders: ['Templates'],
+		excludedTags: ['draft'],
+	};
+
+	const v2_5_1 = {
+		version: 4,
+		noteSort: 'created-asc',
+		folderSort: 'modified-desc',
+		showNoteTitles: true,
+		showNoteCount: false,
+		compactFolders: true,
+		filterFolders: true,
+		showUntagged: false,
+		openTagsInExplorer: false,
+		hiddenFolders: ['source'],
+		filterOnlyFolders: ['status'],
+		topLevelFolders: ['domain/coding'],
+		exclusiveFolders: ['inbox'],
+		flatFolders: ['journal'],
+		folderOrder: ['domain/coding/rust', 'inbox'],
+		folderOrderEnd: ['archive'],
+		folderIcons: { inbox: 'inbox' },
+		includedFolders: [],
+		excludedFolders: ['Templates'],
+		excludedTags: ['draft'],
+	};
+
+	it('upgrades 1.1.1', () => {
+		expect(migrateSettings(v1_1_1)).toEqual({
+			version: SETTINGS_VERSION,
+			showNoteTitles: false,
+			showNoteCount: true,
+			compactFolders: false,
+			filterFolders: true,
+			showUntagged: true,
+			noteSort: 'modified-desc',
+			folderSort: 'name-asc',
+			openTagsInExplorer: true,
+			excludedTags: ['draft', 'private'],
+			exclusiveFolders: ['status/archived'],
+			hiddenFolders: ['source', 'domain/old'],
+			filterOnlyFolders: [],
+			// A pin moved a sub-tag to the top level and put it first.
+			topLevelFolders: ['domain/phd'],
+			folderOrder: ['coding', 'domain/phd'],
+			flatFolders: [],
+			folderOrderEnd: [],
+			folderIcons: { coding: 'code' },
+			includedFolders: ['Notes', 'Journal'],
+			excludedFolders: ['Templates', 'Archive'],
+		});
+	});
+
+	it('keeps 2.0.0 settings, with the settings added since empty', () => {
+		expect(migrateSettings(v2_0_0)).toEqual({ ...v2_0_0, filterOnlyFolders: [], exclusiveFolders: [] });
+	});
+
+	it('keeps 2.5.1 settings as they are', () => {
+		expect(migrateSettings(v2_5_1)).toEqual(v2_5_1);
+	});
 });
 
 describe('applySettingsChange', () => {
