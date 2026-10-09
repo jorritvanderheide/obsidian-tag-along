@@ -12,7 +12,7 @@ your papers by reading status. See [Works well with](#10-works-well-with).
 ![Obsidian Downloads](https://img.shields.io/badge/dynamic/json?logo=obsidian&color=%23483699&label=Downloads&query=%24%5B%22tag-along%22%5D.downloads&url=https%3A%2F%2Fraw.githubusercontent.com%2Fobsidianmd%2Fobsidian-releases%2Fmaster%2Fcommunity-plugin-stats.json)
 ![Obsidian Compatibility](https://img.shields.io/badge/Obsidian-v1.13.0+-483699?logo=obsidian&style=flat-square)
 ![Desktop and mobile](https://img.shields.io/badge/platform-desktop%20%7C%20mobile-483699?style=flat-square)
-[![Checks](https://github.com/jorritvanderheide/obsidian-tag-along/actions/workflows/lint.yml/badge.svg)](https://github.com/jorritvanderheide/obsidian-tag-along/actions/workflows/lint.yml)
+[![Checks](https://github.com/jorritvanderheide/obsidian-tag-along/actions/workflows/ci.yml/badge.svg)](https://github.com/jorritvanderheide/obsidian-tag-along/actions/workflows/ci.yml)
 [![License: EUPL-1.2](https://img.shields.io/badge/license-EUPL--1.2-blue?style=flat-square)](LICENSE)
 
 ![Tag Along next to a note tagged domain/privacy and source/article: the note is in the Privacy folder, and also in Article through the grey Source filter folder](https://raw.githubusercontent.com/jorritvanderheide/obsidian-tag-along/main/images/hero.png)
@@ -408,11 +408,12 @@ moving or reordering folders only changes its settings.
 ### 11.4 How releases are built
 
 Every push is built, linted with [ESLint](https://eslint.org/) and the official
-[Obsidian ESLint plugin](https://github.com/obsidianmd/eslint-plugin), and
-tested with [Vitest](https://vitest.dev/) on Node 20, 22 and 24. Releases are
-built by GitHub Actions from the tagged source, with every action pinned to an
-exact version, and come with a signed build provenance attestation, so you can
-check that the file you installed is the one that was built:
+[Obsidian ESLint plugin](https://github.com/obsidianmd/eslint-plugin), tested
+with [Vitest](https://vitest.dev/), and built with Nix as well. Releases are
+built by GitHub Actions from the tagged source, after the same checks and a
+check that the tag is the version in `manifest.json`, with every action pinned
+to an exact version, and come with a signed build provenance attestation, so
+you can check that the file you installed is the one that was built:
 
 ```sh
 gh attestation verify main.js --repo jorritvanderheide/obsidian-tag-along
