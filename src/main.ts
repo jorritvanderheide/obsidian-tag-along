@@ -53,7 +53,7 @@ export default class TagAlongPlugin extends Plugin implements PluginHost {
 		});
 		this.addCommand({
 			id: 'reveal-active-note',
-			name: 'Reveal active note',
+			name: 'Reveal current note',
 			checkCallback: (checking) => {
 				const file = this.app.workspace.getActiveFile();
 				if (!file || !this.tree().pathToNote(file.path)) return false;

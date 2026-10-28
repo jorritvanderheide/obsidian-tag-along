@@ -34,8 +34,8 @@ and a note shows up under every tag it has. So the book summary sits in
 
 ## 1 Installation
 
-Install Tag Along in Obsidian: go to Settings → Community plugins → Browse,
-search for "Tag Along", then install and enable it. You can also open
+In Obsidian, go to Settings → Community plugins → Browse, search for
+"Tag Along", and install and enable it. You can also find it on
 [its page in the plugin directory](https://community.obsidian.md/plugins/tag-along).
 
 Tag Along needs Obsidian 1.13 or later, and works on desktop and mobile.
@@ -68,12 +68,12 @@ status/
   done/     → Book summary
 ```
 
-A note is listed in the deepest folder for each of its tags. A note tagged both
-`#domain` and `#domain/coding` only shows up in `domain/coding`.
+A note tagged both `#domain` and `#domain/coding` only shows up in
+`domain/coding`, the deepest of the two.
 
-Now open `source/book`. Below its notes you'll see `domain` and `status` in
-grey: these are filter folders. Open `status` inside it, and you see which of
-your book notes are `active` and which are `done`.
+Now open `source/book`. Below its notes, the grey `domain` and `status` folders
+are filter folders. Open `status`, and you see which of your book notes are
+`active` and which are `done`.
 
 Here's the same idea in a bigger vault: the `Privacy` folder, narrowed down by
 the `Source` filter folder to the notes that came from an article.
@@ -87,11 +87,11 @@ folders and filter folders on or off, and expand or collapse all folders.
 
 ## 3 Safety and quality
 
-Tag Along's folders are tags, not folders on disk. Hiding, flattening, pinning,
-moving or reordering a folder only changes Tag Along's own settings, never your
-notes. Files only change when you ask for it: when you rename, copy, move or
-delete a note from Tag Along, and those go through Obsidian the same way they do
-in the core file explorer. [Section 11](#11-network-and-file-disclosure) lists
+The folders in Tag Along are your tags, so arranging them never moves a file.
+Hiding, flattening, pinning, moving or reordering a folder only changes Tag
+Along's own settings. Your notes only change when you rename, copy, move or
+delete one from Tag Along, and those go through Obsidian the same way they do in
+the core file explorer. [Section 11](#11-network-and-file-disclosure) lists
 exactly what it changes and when.
 
 It doesn't connect to the internet and doesn't run any programs.
@@ -100,9 +100,9 @@ It's built for big vaults. A test vault of 20,000 notes, each with three to six
 tags, turns into a tree in about 0.16 seconds on a laptop, and only the folders
 you open are worked out.
 
-Every push is tested, and every release is built in the open with a signed
-attestation, so you can check that the file you installed is the one that was
-built. [Section 11.4](#114-how-releases-are-built) says how.
+Every change is tested. Every release is built in public on GitHub, and you
+can check that the file you installed is the one GitHub built.
+[Section 11.4](#114-how-releases-are-built) shows how.
 
 <br/>
 
@@ -147,13 +147,14 @@ If you want to work on the plugin:
 - **One tree per top-level tag** - `domain`, `source` and `status` each get a
   tree of their own, with their nested tags as folders.
 - **A note in every folder it belongs to** - A note shows up under each of its
-  tags, in the deepest folder for each one.
-- **Compact folders** - A folder whose only content is one sub-folder is shown
+  tags.
+- **Compact folders** - A folder that holds nothing but one sub-folder is shown
   as a single entry, such as `project/website`.
 - **Note titles** - Show a note's `title` property or first heading instead of
   its file name.
 - **Note counts** - See how many notes each folder holds.
-- **Untagged notes** - Optionally listed at the top of the tree.
+- **Untagged notes** - Notes without tags can be listed at the top of the tree,
+  if you like.
 
 ### 5.2 Narrowing down
 
@@ -198,8 +199,8 @@ If you want to work on the plugin:
 
 - **Reveal the note you're in** - Open the folders down to the current note,
   from the command palette or any file menu.
-- **Click a tag, open its folder** - Optionally, clicking a tag in a note opens
-  its folder instead of searching.
+- **Click a tag, open its folder** - If you turn it on, clicking a tag in a note
+  opens its folder instead of a search.
 - **Keyboard navigation** - Move through the tree with the arrow keys, like in
   the core file explorer.
 - **Remembers what's open** - Each pane remembers which folders you had open.
@@ -214,46 +215,45 @@ Every tag becomes a folder, and every `/` in a tag becomes a level. The part
 before the first `/`, like `domain` in `domain/coding`, is the top-level tag,
 and each top-level tag is a tree at the top of the pane.
 
-A note is listed in the deepest folder for each of its tags, so a note tagged
-`#domain` and `#domain/coding` is listed in `domain/coding` only, not in
-`domain` as well. A note with tags under three top-level tags shows up in three
-trees.
+A note tagged `#domain` and `#domain/coding` is listed in `domain/coding` only.
+Tag Along only lists a note in the deepest folders its tags reach, because
+otherwise every note would show up again in every parent folder. A note with
+tags under three top-level tags shows up in three trees.
 
-Tags are matched without regard to case: `#Book` and `#book` are the same
+Upper and lower case don't matter, so `#Book` and `#book` end up in the same
 folder. The folder is named the way the tag is spelled in the first note that
 has it.
 
 ### 6.2 Filter folders
 
-Filter folders are how you combine top-level tags. Inside a folder, the notes
-listed directly in it are split up once more by each top-level tag you haven't
-used on the way there. Open `source/book`, then the grey `status` folder, then
-`active`, and you see the books you're actively working on.
+Filter folders let you combine top-level tags. Open `domain/coding`, then the
+grey `source` folder inside it, then `book`, and you see the notes on coding
+that came from a book.
 
-Filter folders only narrow down the notes listed directly in a folder, because
-sub-folders already split up the rest. They can be chained, and Tag Along only
-offers one when it actually narrows something down: it has to keep at least two
-notes, and not all of them can have the same tag.
+Below the notes in a folder, you'll find your other top-level tags in grey,
+apart from the ones you used to get there. They only sort through the notes
+listed directly in the folder, because its sub-folders already split up the
+rest. You can open one filter folder inside another, like `source` and then
+`status`. Tag Along only offers one when it narrows something down. At least two
+of the notes need a tag under it, and they can't all have the same one.
 
 ### 6.3 When folder settings meet
 
-Most of the time each setting does one simple thing. When several apply to the
-same tag, this is what happens:
+Most of the time each setting does one simple thing. Here's what happens when a
+few of them meet on the same tag:
 
-- **Moved to the top level and hidden** - Hiding a parent doesn't hide a sub-tag
-  you moved to the top level, because it no longer lives there.
-- **Moved to the top level with the same name** - A sub-tag moved to the top
-  level merges with a top-level tag of the same name. `project/reading` and a plain
-  `reading` end up in one `reading` folder.
-- **Exclusive and other tags** - A note with an exclusive tag shows up only
-  under that tag, and its other tags are ignored until the exclusive tag is
-  gone.
-- **Filter-only and nothing else** - A note whose only tags are filter-only has
-  no folder to be in, so it counts as untagged.
-- **Flat and compact** - A flat folder lists all its notes, so compacting stops
-  there.
-- **Filter folders** always follow the sort order. They can't be dragged,
-  pinned or flattened.
+- Say you move `project/reading` to the top level and then hide `project`.
+  `reading` stays visible, because it doesn't live in `project` anymore.
+- If you also have a plain `reading` tag, the moved `project/reading` joins it,
+  and you get one `reading` folder for both.
+- Make `inbox` exclusive, and a note tagged `#inbox` and `#domain/work` only
+  shows up in `inbox`. Once you take `#inbox` off, it's back in `domain/work`.
+- Make `status` filter-only, and a note tagged only `#status/active` has no
+  folder to be in. It counts as untagged.
+- A flat folder lists all the notes below it, so compact folders never merge it
+  with a sub-folder.
+- Filter folders always follow the sort order. You can't drag, pin or flatten
+  them.
 
 <br/>
 
@@ -283,18 +283,19 @@ When the Tag Along pane has focus:
 | Drag a note | Drop it in a note to link to it, like from the file explorer. Drags all selected notes when it's one of them |
 | Ctrl/Cmd+hover | Preview the note |
 
-Delete asks for confirmation the way Obsidian's own settings say it should.
+Deleting works the way it does in the file explorer, so Obsidian asks you first
+if your settings say it should.
 
 <br/>
 
 ## 8 Commands
 
-None of the commands has a hotkey, so you can choose your own in Settings →
-Hotkeys.
+None of the commands come with a hotkey, so they won't clash with the ones
+you already use. You can set your own in Settings → Hotkeys.
 
 - `Tag Along: Open` - Shows the tree in the left sidebar. Also available from
   the ribbon.
-- `Tag Along: Reveal active note` - Opens the folders down to the note you have
+- `Tag Along: Reveal current note` - Opens the folders down to the note you have
   open, and highlights it. Also in the file menu as **Reveal in Tag Along**.
 - `Tag Along: Expand all folders` - Opens every folder in the tree.
 - `Tag Along: Collapse all folders` - Closes every folder in the tree.
@@ -316,12 +317,12 @@ in the settings are where you undo them.
 | --- | --- | --- |
 | **Compact folders** | On | Show a folder and its only sub-folder as one entry. |
 | **Filter folders** | On | Show your other top-level tags as grey folders, to narrow a folder's notes down. |
-| **Folder order** | None | The folders you dragged into place, shown first, and the ones pinned to the bottom. Remove one to let it follow the sort order again. |
-| **Top-level folders** | None | Sub-tags with a top-level folder of their own, merged with a folder of the same name. |
+| **Folder order** | None | Folders you dragged into place come first, and folders you pinned to the bottom come last. All the others follow the sort order, in between. Remove one to put it back in sort order. |
+| **Top-level folders** | None | Sub-tags that get a folder of their own at the top of the tree. One with the same name as a top-level folder joins it. They aren't offered as filter folders. |
 | **Flat folders** | None | Folders that list every note below them, from their sub-tags too, instead of showing sub-folders. |
-| **Exclusive folders** | None | Notes with these tags, or their sub-tags, only show up in these folders. |
-| **Filter-only folders** | None | Top-level tags without a folder of their own, that only show up as filter folders. |
-| **Hidden folders** | None | Tags and their sub-tags without a folder. Their notes still show up under their other tags. A sub-tag moved to the top level stays visible. |
+| **Exclusive folders** | None | Notes with these tags, or their sub-tags, only show up in these folders. Their other tags are ignored, in the tree and in filter folders. |
+| **Filter-only folders** | None | Top-level tags you only filter by, like `status`. They only show up as grey filter folders inside other folders, and not at all with filter folders off. A note with no other tags counts as untagged. |
+| **Hidden folders** | None | Tags and their sub-tags that get no folder, and no filter folder either. Their notes still show up under their other tags, and a note with no other tags counts as untagged. A sub-tag you moved to the top level stays visible. |
 | **Show untagged notes** | Off | List notes without tags at the top of the tree. |
 
 **Notes**
@@ -344,8 +345,8 @@ in the settings are where you undo them.
 
 ## 10 Works well with
 
-These plugins are by the same author. Each does one thing, and Tag Along
-doesn't need either of them, but they fit together nicely.
+I made these too. Each one does one thing and works on its own, but they fit
+together nicely.
 
 ### 10.1 Loose Ends
 
@@ -356,8 +357,8 @@ one extra tag saying it isn't filed yet.
 
 In Tag Along, `domain` and `source` are each a tree, and the extra tag is a folder
 of everything still waiting. Set Loose Ends' unfiled tag to `inbox`, and make
-`inbox` an exclusive folder in Tag Along: a new note then shows up in `inbox`
-only, and moves to its proper folders the moment you've finished tagging it.
+`inbox` an exclusive folder in Tag Along. A new note then only shows up in
+`inbox`, and moves to its proper folders the moment you've finished tagging it.
 
 ![Tag Along with the inbox folder at the top, holding the notes that still need tags, and the domain tree below](https://raw.githubusercontent.com/jorritvanderheide/obsidian-tag-along/main/images/loose-ends.png)
 
@@ -396,26 +397,30 @@ Only when you ask for it, and only these:
 - **Drag:** Dragging a note out of the tree hands it to Obsidian, the way the
   core file explorer does. Drop it in a note and Obsidian adds a link there.
 
-Nothing else Tag Along does touches a note: hiding, flattening, pinning,
-moving or reordering folders only changes its settings.
+Nothing else Tag Along does changes a note. Everything you do to folders, like
+hiding or pinning one, only changes Tag Along's own settings.
 
 ### 11.3 What it stores
 
 - **Settings:** Its own `data.json` in the plugin folder.
 - **Open folders:** Which folders are open in each pane, saved with Obsidian's
   workspace layout.
-- **Clipboard:** **Copy tags** puts the tags on your clipboard, only when you
-  choose it.
+- **Clipboard:** When you choose **Copy tags**, it puts the tags on your
+  clipboard. Nothing else is ever put there.
 
 ### 11.4 How releases are built
 
-Every push is built, linted with [ESLint](https://eslint.org/) and the official
-[Obsidian ESLint plugin](https://github.com/obsidianmd/eslint-plugin), tested
-with [Vitest](https://vitest.dev/), and built with Nix as well. Releases are
-built by GitHub Actions from the tagged source, after the same checks and a
-check that the tag is the version in `manifest.json`, with every action pinned
-to an exact version, and come with a signed build provenance attestation, so
-you can check that the file you installed is the one that was built:
+Every change I push is built, checked with [ESLint](https://eslint.org/) and
+the official [Obsidian ESLint plugin](https://github.com/obsidianmd/eslint-plugin),
+and tested with [Vitest](https://vitest.dev/). Nix builds it a second time,
+on its own.
+
+Releases are built by GitHub Actions from the tagged code, after the same
+checks. A release only goes out when its tag matches the version in
+`manifest.json`, and every action it uses is pinned to an exact version. Each
+release comes with a signed attestation from GitHub, which records what it
+was built from. To check that the `main.js` you installed is the one GitHub
+built:
 
 ```sh
 gh attestation verify main.js --repo jorritvanderheide/obsidian-tag-along
@@ -425,22 +430,22 @@ gh attestation verify main.js --repo jorritvanderheide/obsidian-tag-along
 
 ## 12 Questions or issues?
 
-Have a look at the [FAQ](FAQ.md) first: it covers the most common surprises,
-like a note that doesn't show up where you expect. If something still doesn't
-work, or you have an idea, please
+Have a look at the [FAQ](FAQ.md) first. It covers the things people run into
+most, like a note that doesn't show up where you expect. If something still
+doesn't work, or you have an idea, please
 [open an issue](https://github.com/jorritvanderheide/obsidian-tag-along/issues/new/choose).
-Found a security problem? Please report it privately, as described in the
-[security policy](SECURITY.md).
+Found a security problem? Please report it privately, the way the
+[security policy](SECURITY.md) explains.
 
-The source lives on [Codeberg](https://codeberg.org/BW20/obsidian-tag-along)
-and is mirrored to [GitHub](https://github.com/jorritvanderheide/obsidian-tag-along).
+The code lives on [Codeberg](https://codeberg.org/BW20/obsidian-tag-along),
+with a copy on [GitHub](https://github.com/jorritvanderheide/obsidian-tag-along).
 
 <br/>
 
 ## 13 Support
 
-Tag Along is free. If you find it useful, you can support its development on
-Liberapay:
+Tag Along is free. If it's useful to you and you'd like to give something back,
+you can do that on Liberapay:
 
 [![Donate](https://liberapay.com/assets/widgets/donate.svg)](https://liberapay.com/BW20)
 
@@ -451,5 +456,5 @@ Liberapay:
 Copyright © 2026 Jorrit van der Heide. Licensed under the [EUPL-1.2](LICENSE).
 
 Tag Along started as a fork of [TagFolder](https://github.com/vrtmrz/obsidian-tagfolder)
-by vorotamoroz. Version 2 is a rewrite that shares no code with it; releases up
-to 1.1.1 remain available under the MIT license.
+by vorotamoroz. Version 2 is a complete rewrite and shares no code with it, and
+the releases up to 1.1.1 are still available under the MIT license.

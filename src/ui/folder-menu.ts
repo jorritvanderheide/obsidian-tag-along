@@ -191,7 +191,7 @@ function addFilterOnlyItem(menu: Menu, plugin: PluginHost, tree: TagTree, node: 
 			.setIcon('filter')
 			.onClick(() => {
 				void plugin.updateSettings((s) => ({ filterOnlyFolders: [...s.filterOnlyFolders, tag] }));
-				new Notice(`#${tag} now only shows up as a filter folder. Undo it under Filter-only folders in the settings.`);
+				new Notice(`#${tag} now only shows up as a filter folder. You can undo this in Settings → Tag Along → Filter-only folders.`);
 			}),
 	);
 }
@@ -205,7 +205,7 @@ function addHideItem(menu: Menu, plugin: PluginHost, tree: TagTree, node: Folder
 			.setIcon('eye-off')
 			.onClick(() => {
 				void plugin.updateSettings((s) => ({ hiddenFolders: [...s.hiddenFolders, tag] }));
-				new Notice(`Hid #${tag}. Show it again under Hidden folders in the settings.`);
+				new Notice(`#${tag} is hidden now. You can show it again in Settings → Tag Along → Hidden folders.`);
 			}),
 	);
 }

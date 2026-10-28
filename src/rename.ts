@@ -28,7 +28,7 @@ export async function renameNote(app: App, file: TFile, oldTitle: string, title:
 		if (file.basename !== fileNameFor(oldTitle) || name === '' || name === file.basename) return;
 		const folder = file.parent?.isRoot() === false ? `${file.parent.path}/` : '';
 		const path = normalizePath(`${folder}${name}.${file.extension}`);
-		if (app.vault.getAbstractFileByPath(path)) new Notice(`Kept the file name, because "${name}" already exists.`);
+		if (app.vault.getAbstractFileByPath(path)) new Notice(`The note kept its file name, because there's already a file called "${name}" next to it.`);
 		else await app.fileManager.renameFile(file, path);
 	} catch (error) {
 		new Notice(`Couldn't rename the note: ${error instanceof Error ? error.message : String(error)}`);

@@ -55,7 +55,7 @@ export class TagAlongSettingTab extends PluginSettingTab {
 					{
 						type: 'page',
 						name: 'Folder order',
-						desc: 'Folders you dragged into place in the tree, and folders pinned to the bottom of the pane. Every other folder follows the sort order, in between. To undo it, remove a folder here, or right-click it and choose "Follow sort order".',
+						desc: 'Folders you dragged into place come first, and folders you pinned to the bottom come last. All the others follow the sort order, in between. To put one back in sort order, remove it here, or right-click it and choose "Follow sort order".',
 						displayValue: () =>
 							countLabel(settings().folderOrder.length + settings().folderOrderEnd.length, 'folder', 'folders'),
 						items: [
@@ -80,7 +80,7 @@ export class TagAlongSettingTab extends PluginSettingTab {
 					{
 						type: 'page',
 						name: 'Top-level folders',
-						desc: 'These sub-tags move out of their parent and get a folder of their own at the top of the tree, merged with a folder of the same name. They aren\'t offered as filter folders. You can also right-click a folder and choose "Move to top level".',
+						desc: 'These sub-tags leave their parent and get a folder of their own at the top of the tree. If you add "project/reading" and already have a top-level "reading" folder, the two become one. Moved folders aren\'t offered as filter folders. You can also right-click a folder and choose "Move to top level".',
 						displayValue: () => countLabel(settings().topLevelFolders.length, 'folder', 'folders'),
 						items: [
 							this.tagList(
@@ -110,14 +110,14 @@ export class TagAlongSettingTab extends PluginSettingTab {
 					{
 						type: 'page',
 						name: 'Exclusive folders',
-						desc: 'Notes with these tags show up only in these folders, not under their other tags, and their other tags aren\'t offered as filter folders. Sub-tags count too: "inbox" also keeps notes tagged "inbox/later" to itself. You can also right-click a folder and choose "Keep notes only here".',
+						desc: 'Add "inbox" here, and a note tagged "inbox" only shows up in that folder until you take the tag off. Its other tags are ignored, in the tree and in filter folders. Sub-tags count too, so this also covers notes tagged "inbox/later". You can also right-click a folder and choose "Keep notes only here".',
 						displayValue: () => countLabel(settings().exclusiveFolders.length, 'folder', 'folders'),
 						items: [
 							this.tagList(
 								'exclusiveFolders',
 								allTags,
 								'Add a folder',
-								'Choose a tag to keep its notes to itself...',
+								'Choose a tag to make exclusive...',
 								'No exclusive folders.',
 							),
 						],
@@ -125,7 +125,7 @@ export class TagAlongSettingTab extends PluginSettingTab {
 					{
 						type: 'page',
 						name: 'Filter-only folders',
-						desc: 'These top-level tags get no folder of their own, and only show up as filter folders inside other folders. Handy for tags you only filter by, like "status" or "priority". This needs filter folders to be on. Notes without any other tags count as untagged. You can also right-click a top-level folder and choose "Show only as filter".',
+						desc: 'This is for top-level tags you only filter by, like "status" or "priority". They lose their folder at the top of the tree, and only show up as grey filter folders inside other folders. With filter folders off, they don\'t show up at all. A note with no other tags counts as untagged. You can also right-click a top-level folder and choose "Show only as filter".',
 						displayValue: () => countLabel(settings().filterOnlyFolders.length, 'folder', 'folders'),
 						items: [
 							this.tagList(
@@ -141,7 +141,7 @@ export class TagAlongSettingTab extends PluginSettingTab {
 					{
 						type: 'page',
 						name: 'Hidden folders',
-						desc: 'These tags and their sub-tags get no folder, and aren\'t offered as filter folders. Their notes still show up under their other tags, and notes without any other tags count as untagged. Folders moved to the top level stay visible, even when the tag they came from is hidden. You can also right-click a folder and choose "Hide folder".',
+						desc: 'These tags and their sub-tags get no folder, and no filter folder either. Their notes still show up under their other tags, and a note with no other tags counts as untagged. A sub-tag you moved to the top level stays visible, even when you hide its parent. You can also right-click a folder and choose "Hide folder".',
 						displayValue: () => countLabel(settings().hiddenFolders.length, 'folder', 'folders'),
 						items: [
 							this.tagList(
@@ -193,7 +193,7 @@ export class TagAlongSettingTab extends PluginSettingTab {
 							settings().includedFolders.length === 0
 								? 'Whole vault'
 								: countLabel(settings().includedFolders.length, 'folder', 'folders'),
-						items: [this.folderList('includedFolders', 'Include a folder', 'No included folders: the whole vault is used.')],
+						items: [this.folderList('includedFolders', 'Include a folder', 'No included folders yet, so the tree shows the whole vault.')],
 					},
 					{
 						type: 'page',
@@ -205,7 +205,7 @@ export class TagAlongSettingTab extends PluginSettingTab {
 					{
 						type: 'page',
 						name: 'Excluded tags',
-						desc: 'Notes with any of these tags are left out of the tree. Sub-tags count too: excluding "archive" also leaves out notes tagged "archive/2024".',
+						desc: 'Notes with any of these tags are left out of the tree. Sub-tags count too, so excluding "archive" also leaves out notes tagged "archive/2024".',
 						displayValue: () => countLabel(settings().excludedTags.length, 'tag', 'tags'),
 						items: [
 							this.tagList(

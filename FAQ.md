@@ -31,8 +31,8 @@ You tried to reveal a note that isn't in the tree, for one of the reasons above.
 
 ### "#… isn't shown in Tag Along."
 
-You clicked a tag whose folder isn't in the tree: it's hidden, excluded, or
-filter-only. Ctrl-click or Cmd-click a tag to search for it instead.
+You clicked a tag whose folder isn't in the tree, because it's hidden, excluded
+or filter-only. Ctrl-click or Cmd-click a tag to search for it instead.
 
 ### A note is in `domain/coding`, but not in `domain`
 
@@ -50,17 +50,18 @@ makes an `inbox` or `archive` folder work.
 
 ### Why is there no filter folder for one of my tags?
 
-Tag Along only offers a filter folder when it actually narrows something down.
-It looks at the notes listed directly in the folder, not the ones in its
-sub-folders, and it needs at least two of them with a tag under that top-level
-tag, and not all with the same one. A top-level tag you already used on the way
-to this folder isn't offered again.
+Tag Along only offers a filter folder when it narrows something down. It only
+looks at the notes listed directly in the folder, because its sub-folders
+already split up the rest. At least two of those notes need a tag under that
+top-level tag, and they can't all have the same one. A top-level tag you already
+used on the way to this folder isn't offered again.
 
 ### Two of my tags became one folder
 
-Tags are matched without regard to case, so `#Book` and `#book` are one folder.
-And a sub-tag you moved to the top level merges with a top-level tag of the same
-name: `project/reading` moved to the top level joins a plain `reading`.
+Upper and lower case don't matter, so `#Book` and `#book` end up in the same
+folder. A sub-tag you moved to the top level also joins a top-level tag of the
+same name. Move `project/reading` to the top level, and it shares one folder
+with a plain `reading`.
 
 ### I hid a folder, but part of it is still there
 
@@ -76,15 +77,15 @@ settings, and a filter-only folder from **Filter-only folders**.
 
 ### Can I drag a note onto a folder to tag it?
 
-No. Dragging a folder puts it in your own order, and dragging a note works like
-in the core file explorer, so you can drop it in a note to link to it. To tag a
+No. Dragging a folder puts it in your own order. Dragging a note works like in
+the core file explorer, so you can drop it in a note to link to it. To tag a
 note, edit its tags in the note.
 
 ### How do I rename a folder?
 
 A folder is a tag, so you rename the tag in every note that has it. Tag Along
 doesn't change tags, but [Tag Wrangler](https://community.obsidian.md/plugins/tag-wrangler)
-does: right-click the tag in Obsidian's Tags view and rename it, along with its
+does. Right-click the tag in Obsidian's Tags view and rename it, along with its
 sub-tags. Settings you made for the old folder, like hiding or pinning it, don't
 follow the new name, so set them again.
 
@@ -103,16 +104,17 @@ heading and the `title` property, if they showed the old name. The file is only
 renamed when it was named after the old name too, so a file name that's an ID
 or a citation key stays as it is.
 
-### "Kept the file name, because … already exists."
+### "The note kept its file name, because there's already a file called … next to it."
 
-The new name was already taken by another file in the same folder. The heading
-and `title` property were renamed, the file name stayed the same.
+Another file in the same folder on disk already has that name, so Tag Along left
+the file name alone. The heading and the `title` property still got the new
+name, if they showed the old one. You can give the file a different name in the
+file explorer.
 
 ### Does Tag Along change my notes?
 
-Only when you ask for it: renaming, copying, moving or deleting a note. Hiding,
-flattening, pinning, moving and reordering folders only change Tag Along's own
-settings. See
+Only when you ask for it, by renaming, copying, moving or deleting a note.
+Everything you do to folders only changes Tag Along's own settings. See
 [section 11 of the README](README.md#11-network-and-file-disclosure).
 
 ## Other

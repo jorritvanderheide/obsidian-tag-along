@@ -6,6 +6,8 @@ breaking is in [Compatibility](docs/compatibility.md).
 ## Unreleased
 
 - Drag notes out of the tree, as you would from the file explorer.
+- Plainer wording in the settings descriptions, the notices, the README and the FAQ. The command "Reveal active note" is now called "Reveal current note", and its hotkey still works.
+- The FAQ said renaming a note always renames its heading and `title` property when the file name is taken. It now says they only change when they showed the old name.
 
 ## 2.5.1
 
