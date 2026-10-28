@@ -3,7 +3,7 @@
 What changed in each release of Tag Along, newest first. What counts as
 breaking is in [Compatibility](docs/compatibility.md).
 
-## Unreleased
+## 2.6.0
 
 - Drag notes out of the tree, as you would from the file explorer.
 - Plainer wording in the settings descriptions, the notices, the README and the FAQ. The command "Reveal active note" is now called "Reveal current note", and its hotkey still works.

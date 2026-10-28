@@ -26,7 +26,7 @@
           inherit (package) version;
           src = ./.;
           # Update with: nix run nixpkgs#prefetch-npm-deps -- package-lock.json
-          npmDepsHash = "sha256-gzqQO1d1G+wG8E0NNAeDFBvnHyeGu+JKTBGBy+pLXSE=";
+          npmDepsHash = "sha256-Tv1eaweGo03Lawkcc5JpqFowiSic2daS3aE9p6MXWkU=";
           nodejs = pkgs.nodejs_24;
           installPhase = ''
             mkdir -p $out
