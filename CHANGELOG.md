@@ -3,6 +3,14 @@
 What changed in each release of Tag Along, newest first. What counts as
 breaking is in [Compatibility](docs/compatibility.md).
 
+## Unreleased
+
+- Tag Along now needs Obsidian 1.13.1. Some settings show a summary beside
+  them, like how many folders you picked, and that came with 1.13.1. On
+  1.13.0 it was missing.
+- Obsidian older than 1.7.2 is no longer offered Tag Along 1.0.5, a release
+  that can't be downloaded. 1.1.1 is the oldest one there is.
+
 ## 2.6.0
 
 - Drag notes out of the tree, as you would from the file explorer.

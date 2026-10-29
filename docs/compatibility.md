@@ -82,7 +82,10 @@ disclosure and `SECURITY.md` in the same change.
 - **`minAppVersion`** in `manifest.json` is the oldest Obsidian a release runs
   on. `versions.json` keeps it for every release, so Obsidian offers people with
   an older Obsidian the last release that runs there. Raising it is not breaking,
-  but goes in the changelog. Never change or remove an entry in `versions.json`.
+  but goes in the changelog. Never change or remove the entry of a release in
+  `versions.json`. The entries for 1.0.0 to 1.0.5 went in 2.6.1: they have no
+  GitHub release, so they offered an Obsidian older than 1.7.2 one it couldn't
+  download.
 - **Mobile:** Tag Along runs on phones and tablets (`isDesktopOnly` is `false`).
   Making it desktop-only, or using Node or Electron APIs, is breaking.
 
