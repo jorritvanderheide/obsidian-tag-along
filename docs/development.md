@@ -44,7 +44,9 @@ Tests are in `tests/`, one per file in `src/core/`, named after it, plus
    Codeberg. That is the only remote: GitHub mirrors it.
 4. When the tag reaches GitHub, `.github/workflows/release.yml` runs the CI
    checks, makes sure the tag is the version in `manifest.json`, `package.json`
-   and `versions.json`, builds it, attests `main.js` and `styles.css`, and creates a **draft**
+   and `versions.json`, and builds it without running any dependency's install
+   script. It attests `main.js`, `manifest.json` and `styles.css`, and a second
+   job, the only one that can write to the repository, puts them in a **draft**
    GitHub release named like "Tag Along 2.5.1", with the version's part of
    `CHANGELOG.md` as its notes.
 5. **Publish the draft.** Obsidian's community directory installs from GitHub
