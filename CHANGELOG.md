@@ -3,7 +3,7 @@
 What changed in each release of Tag Along, newest first. What counts as
 breaking is in [Compatibility](docs/compatibility.md).
 
-## Unreleased
+## 2.6.1
 
 - Tag Along now needs Obsidian 1.13.1. Some settings show a summary beside
   them, like how many folders you picked, and that came with 1.13.1. On
