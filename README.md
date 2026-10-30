@@ -38,7 +38,7 @@ In Obsidian, go to Settings → Community plugins → Browse, search for
 "Tag Along", and install and enable it. You can also find it on
 [its page in the plugin directory](https://community.obsidian.md/plugins/tag-along).
 
-Tag Along needs Obsidian 1.13 or later, and works on desktop and mobile.
+Tag Along needs Obsidian 1.13.1 or later, and works on desktop and mobile.
 
 <br/>
 
